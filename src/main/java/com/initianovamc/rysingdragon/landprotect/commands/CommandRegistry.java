@@ -103,6 +103,14 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("removeclaim"), removeClaim);
 		
+		CommandSpec removeFriend = CommandSpec.builder()
+				.description(Text.of("removes the targeted player as a friend"))
+				.permission("landprotect.removefriend")
+				.executor(new RemoveFriendCommand())
+				.arguments(GenericArguments.player(Text.of("friend")))
+				.build();
+		commands.put(Arrays.asList("removefriend"), removeFriend);
+		
 		return commands;
 		
 	}
