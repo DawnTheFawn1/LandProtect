@@ -51,18 +51,23 @@ public final class Utils {
 	
 	public static boolean isFriend(UUID playerUUID, UUID friendUUID) {
 		
+		List<String> friendList = getFriendList(playerUUID);
+		
+		if (friendList.contains(friendUUID.toString())) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static List<String> getFriendList(UUID playerUUID) {
+		
 		try {
 			List<String> friendList = PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", playerUUID, "friendlist").getList(TypeToken.of(String.class));
-			
-			if (friendList.contains(friendUUID.toString())) {
-				return true;
-			}
-			
+			return friendList;
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
 		}
-		
-		return false;
+		return new ArrayList<>();
 	}
 	
 	public static boolean isTrustedToClaim(Vector3i chunk, UUID player) {
