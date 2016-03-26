@@ -112,16 +112,16 @@ public final class Utils {
 		return protectedClaims;
 	}
 	
-	public static Optional<List<Vector3i>> getClaims(UUID player) {
+	public static List<Vector3i> getClaims(UUID player) {
 		
 		try {
 			List<Vector3i> claims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)));
-			return Optional.of(claims);
+			return claims;
 		
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
 		}	
-		return Optional.empty();
+		return new ArrayList<>();
 	}
 
 	public static Optional<List<UUID>> getTrustedPlayers(Vector3i chunk) {

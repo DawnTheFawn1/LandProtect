@@ -34,19 +34,14 @@ public class ClaimCommand implements CommandExecutor{
 					if (subject instanceof OptionSubject) {
 						OptionSubject optSubject = (OptionSubject)subject;
 						int claimLimit = Integer.parseInt(optSubject.getOption("claimlimit").orElse("0"));
+						int claims = Utils.getClaims(player.getUniqueId()).size();
 						
-						if (Utils.getClaims(player.getUniqueId()).isPresent()) {
-							int claims = Utils.getClaims(player.getUniqueId()).get().size();
-							if (claims >= claimLimit) {
-								player.sendMessage(Text.of("You have reached the max claim limit"));
-								return CommandResult.success();
-							} else LandProtect.instance.getLogger().info("claim limit not reached");
-						} else {
-							LandProtect.instance.getLogger().info("claims not present");
-						}
-					} else LandProtect.instance.getLogger().info("not an option subject");
-
-				} else LandProtect.instance.getLogger().info("not a subject");
+						if (claims >= claimLimit) {
+							player.sendMessage(Text.of("You have reached the max claim limit"));
+							return CommandResult.success();
+						}  
+					} 
+				} 
 				
 				List<Vector3i> currentClaims = new ArrayList<>();
 				try {

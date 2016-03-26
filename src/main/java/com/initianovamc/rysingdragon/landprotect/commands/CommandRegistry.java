@@ -48,8 +48,8 @@ public class CommandRegistry {
 		CommandSpec addFriend = CommandSpec.builder()
 				.description(Text.of("Sends a request to a player so both of you will have access to each other's claims"))
 				.permission("landprotect.addfriend")
-				.arguments(GenericArguments.player(Text.of("friend")))
 				.executor(new AddFriendCommand())
+				.arguments(GenericArguments.player(Text.of("friend")))
 				.build();
 		commands.put(Arrays.asList("addfriend"), addFriend);
 		
@@ -90,11 +90,18 @@ public class CommandRegistry {
 		commands.put(Arrays.asList("unprotect"), unprotect);
 		
 		CommandSpec help = CommandSpec.builder()
-				.permission("landprotect.help")
 				.description(Text.of("help command"))
+				.permission("landprotect.help")
 				.executor(new HelpCommand())
 				.build();
 		commands.put(Arrays.asList("help"), help);
+		
+		CommandSpec removeClaim = CommandSpec.builder()
+				.description(Text.of("forcefully removes a claimed chunk"))
+				.permission("landprotect.removeclaim")
+				.executor(new RemoveClaimCommand())
+				.build();
+		commands.put(Arrays.asList("removeclaim"), removeClaim);
 		
 		return commands;
 		

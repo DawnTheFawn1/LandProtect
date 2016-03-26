@@ -31,34 +31,32 @@ public class UnclaimCommand implements CommandExecutor{
 					UUID owner = Utils.getClaimOwner(chunk).get();
 					
 					if (player.getUniqueId().equals(owner)) {
-						if (Utils.getClaims(player.getUniqueId()).isPresent()) {
-							List<Vector3i> claims = Utils.getClaims(player.getUniqueId()).get();
-							TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-							if (claims.contains(chunk)) {
-								claims.remove(chunk);
+						List<Vector3i> claims = Utils.getClaims(player.getUniqueId());
+						TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
+						if (claims.contains(chunk)) {
+							claims.remove(chunk);
+							try {
+								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.getUniqueId().toString(), "OwnedClaims").setValue(token, claims);
+							} catch (ObjectMappingException e) {
+								e.printStackTrace();
+							}
+						} else {
+							player.sendMessage(Text.of("You do not own this claim"));
+						}
+						if (Utils.getTrustedPlayers(chunk).isPresent()) {
+							List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk).get();
+							for (UUID trusted : trustedPlayers) {
+								
+								List<Vector3i> trustedClaims = Utils.getClaims(trusted);
+								trustedClaims.remove(chunk);
 								try {
-									ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.getUniqueId().toString(), "OwnedClaims").setValue(token, claims);
+									ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.toString(), "TrustedClaims").setValue(token, trustedClaims);
 								} catch (ObjectMappingException e) {
 									e.printStackTrace();
 								}
-							} else {
-								player.sendMessage(Text.of("You do not own this claim"));
 							}
-							if (Utils.getTrustedPlayers(chunk).isPresent()) {
-								List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk).get();
-								for (UUID trusted : trustedPlayers) {
-									if (Utils.getClaims(trusted).isPresent()) {
-										List<Vector3i> trustedClaims = Utils.getClaims(trusted).get();
-										trustedClaims.remove(chunk);
-										try {
-											ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.toString(), "OwnedClaims").setValue(token, trustedClaims);
-										} catch (ObjectMappingException e) {
-											e.printStackTrace();
-										}
-									}
-								}
-							}
-						}
+						}		
+						
 					} else {
 						player.sendMessage(Text.of("You do not own this claim"));
 					}
