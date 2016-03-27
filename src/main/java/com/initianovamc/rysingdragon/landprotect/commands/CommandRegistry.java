@@ -111,6 +111,14 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("removefriend"), removeFriend);
 		
+		CommandSpec untrust = CommandSpec.builder()
+				.description(Text.of("Remove a player as trusted from your land"))
+				.permission("landprotect.untrust")
+				.executor(new UntrustCommand())
+				.arguments(GenericArguments.player(Text.of("player")))
+				.build();
+		commands.put(Arrays.asList("untrust"), untrust);
+		
 		return commands;
 		
 	}
