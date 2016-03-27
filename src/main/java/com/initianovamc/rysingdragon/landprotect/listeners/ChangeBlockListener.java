@@ -21,12 +21,21 @@ public class ChangeBlockListener {
 				if (owner.equals(player.getUniqueId())) {
 					return;
 				}
+				
 				if (Utils.isFriend(player.getUniqueId(), owner)) {
+					return;
+				}
+				
+				if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+					return;
+				}
+				
+				if (player.hasPermission("landprotect.claim.bypass")) {
 					return;
 				}
 			}
 			
-			if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+			if (player.hasPermission("landprotect.protect.bypass")) {
 				return;
 			}
 			
@@ -47,9 +56,18 @@ public class ChangeBlockListener {
 				if (Utils.isFriend(player.getUniqueId(), owner)) {
 					return;
 				}
+				
+				if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+					return;
+				}
+				
+				if (player.hasPermission("landprotect.claim.bypass")) {
+					return;
+				}
+				
 			}
 			
-			if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+			if (player.hasPermission("landprotect.protect.bypass")) {
 				return;
 			}
 			

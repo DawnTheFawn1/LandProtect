@@ -22,22 +22,29 @@ public class InteractBlockListener {
 		if (event.getCause().containsType(Player.class)) {
 			if (event.getTargetBlock().getLocation().isPresent()) {
 				Vector3i chunk = event.getTargetBlock().getLocation().get().getChunkPosition();
-				if (Utils.isProtected(chunk)) {
-					try {
-						List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
-						if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
-							event.setCancelled(true);
-						}
-					} catch (ObjectMappingException e) {
-						e.printStackTrace();
-					}
-					
-				}
 				
 				if (Utils.isClaimed(chunk)) {
+				
+					if (Utils.isProtected(chunk)) {
+						try {
+							List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
+							if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
+								event.setCancelled(true);
+							}
+						} catch (ObjectMappingException e) {
+							e.printStackTrace();
+						}
+						
+						if (player.hasPermission("landprotect.protect.bypass")) {
+							return;
+						}
+						
+					}
+					
 					if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
 						return;
 					}
+					
 					if (Utils.getClaimOwner(chunk).isPresent()) {
 						UUID owner = Utils.getClaimOwner(chunk).get();
 						if (owner.equals(player.getUniqueId())) {
@@ -46,6 +53,11 @@ public class InteractBlockListener {
 							return;
 						}
 					}
+					
+					if (player.hasPermission("landprotect.claim.bypass")) {
+						return;
+					}	
+					event.setCancelled(true);
 				}
 			}
 		}

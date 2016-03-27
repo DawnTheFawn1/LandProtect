@@ -40,7 +40,7 @@ public class CommandRegistry {
 		
 		CommandSpec claim = CommandSpec.builder()
 				.description(Text.of("Claims the chunk the player is standing in when used"))
-				.permission("landprotect.claim")
+				.permission("landprotect.claim.command")
 				.executor(new ClaimCommand())
 				.build();
 		commands.put(Arrays.asList("claim"), claim);
@@ -62,7 +62,7 @@ public class CommandRegistry {
 		
 		CommandSpec protect = CommandSpec.builder()
 				.description(Text.of("Claims the chunk you're standing in as a protected area"))
-				.permission("landprotect.protect")
+				.permission("landprotect.protect.command")
 				.executor(new ProtectCommand())
 				.build();
 		commands.put(Arrays.asList("protect"), protect);
