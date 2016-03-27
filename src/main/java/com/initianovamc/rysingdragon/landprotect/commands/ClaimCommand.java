@@ -36,10 +36,13 @@ public class ClaimCommand implements CommandExecutor{
 						int claimLimit = Integer.parseInt(optSubject.getOption("claimlimit").orElse("0"));
 						int claims = Utils.getClaims(player.getUniqueId()).size();
 						
-						if (claims >= claimLimit) {
-							player.sendMessage(Text.of("You have reached the max claim limit"));
-							return CommandResult.success();
-						}  
+						if (claimLimit != 0) {
+							if (claims >= claimLimit) {
+								player.sendMessage(Text.of("You have reached the max claim limit"));
+								return CommandResult.success();
+							} 
+						}
+						 
 					} 
 				} 
 				
