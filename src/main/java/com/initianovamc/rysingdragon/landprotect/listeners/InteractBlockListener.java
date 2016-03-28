@@ -26,6 +26,11 @@ public class InteractBlockListener {
 				if (Utils.isClaimed(chunk)) {
 				
 					if (Utils.isProtected(chunk)) {
+						
+						if (player.hasPermission("landprotect.protect.bypass")) {
+							return;
+						}
+						
 						try {
 							List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
 							if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
@@ -33,10 +38,6 @@ public class InteractBlockListener {
 							}
 						} catch (ObjectMappingException e) {
 							e.printStackTrace();
-						}
-						
-						if (player.hasPermission("landprotect.protect.bypass")) {
-							return;
 						}
 						
 					}
