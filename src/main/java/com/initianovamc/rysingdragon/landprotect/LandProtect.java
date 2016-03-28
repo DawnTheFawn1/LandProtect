@@ -8,6 +8,7 @@ import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import com.initianovamc.rysingdragon.landprotect.listeners.ChangeBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.InteractBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.PlayerJoinListener;
+import com.initianovamc.rysingdragon.landprotect.listeners.PlayerMoveListener;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -68,6 +69,7 @@ public class LandProtect {
 		Sponge.getGame().getEventManager().registerListeners(this, new ChangeBlockListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new InteractBlockListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new PlayerJoinListener());
+		Sponge.getGame().getEventManager().registerListeners(this, new PlayerMoveListener());
 	}
 	
 	@Listener
