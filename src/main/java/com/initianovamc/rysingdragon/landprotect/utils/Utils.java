@@ -14,6 +14,7 @@ import java.util.UUID;
 public final class Utils {
 	
 	public static List<FriendRequest> friendRequests = new ArrayList<>();
+	public static List<UUID> inInteractMode = new ArrayList<>();
 
 	public static boolean isClaimed(Vector3i chunk) {
 		

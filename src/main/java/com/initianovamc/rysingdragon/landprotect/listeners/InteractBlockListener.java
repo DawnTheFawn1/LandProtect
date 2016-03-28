@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,21 @@ public class InteractBlockListener {
 	public void onInteract(InteractBlockEvent.Secondary event, @First Player player) {
 		
 		if (event.getCause().containsType(Player.class)) {
+			
+			if (Utils.inInteractMode.contains(player.getUniqueId())) {
+				Utils.inInteractMode.remove(player.getUniqueId());
+				event.setCancelled(true);
+				try {
+					List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
+					interactables.add(event.getTargetBlock().getState().getType().getName());
+					GeneralConfig.getConfig().getConfigNode().getNode("Interactable").setValue(interactables);
+					GeneralConfig.getConfig().save();
+					player.sendMessage(Text.of("id ", event.getTargetBlock().getState().getType().getName(), " has been added to the list of interactable blocks"));
+				} catch (ObjectMappingException e) {
+					e.printStackTrace();
+				}
+			}
+			
 			if (event.getTargetBlock().getLocation().isPresent()) {
 				Vector3i chunk = event.getTargetBlock().getLocation().get().getChunkPosition();
 				

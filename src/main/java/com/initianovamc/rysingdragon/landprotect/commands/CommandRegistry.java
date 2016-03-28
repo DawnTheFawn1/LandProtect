@@ -34,7 +34,7 @@ public class CommandRegistry {
 				.description(Text.of("Adds a block as interactable in protected zones"))
 				.permission("landprotect.addinteractable")
 				.executor(new AddInteractable())
-				.arguments(GenericArguments.string(Text.of("block-id")))
+				.arguments(GenericArguments.optional(GenericArguments.string(Text.of("block-id"))))
 				.build();
 		commands.put(Arrays.asList("addinteractable"), addInteractable);
 		
