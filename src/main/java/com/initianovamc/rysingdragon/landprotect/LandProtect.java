@@ -28,7 +28,7 @@ import java.nio.file.Path;
 public class LandProtect {
 
 	public static final String PLUGIN_ID = "com.initianovamc.rysingdragon.landprotect";
-	public static final String PLUGIN_VERSION = "1.0.2-BETA";
+	public static final String PLUGIN_VERSION = "1.1.0-BETA";
 	public static final String PLUGIN_DESCRIPTION = "A land protection plugin";
 	public static final String PLUGIN_NAME = "LandProtect";
 	public static final String PLUGIN_AUTHOR = "RysingDragon";
