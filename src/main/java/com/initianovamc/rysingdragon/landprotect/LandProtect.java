@@ -9,6 +9,7 @@ import com.initianovamc.rysingdragon.landprotect.listeners.ChangeBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.InteractBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.PlayerJoinListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.PlayerMoveListener;
+import me.flibio.updatifier.Updatifier;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -17,6 +18,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.io.File;
@@ -24,11 +26,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Plugin(name = LandProtect.PLUGIN_NAME, id = LandProtect.PLUGIN_ID, version = LandProtect.PLUGIN_VERSION, description = LandProtect.PLUGIN_DESCRIPTION, authors = LandProtect.PLUGIN_AUTHOR)
+@Updatifier(repoName = "LandProtect", repoOwner = "RysingDragon", version = "v1.1.0-BETA")
+@Plugin(name = LandProtect.PLUGIN_NAME, id = LandProtect.PLUGIN_ID, version = LandProtect.PLUGIN_VERSION, description = LandProtect.PLUGIN_DESCRIPTION, authors = LandProtect.PLUGIN_AUTHOR, dependencies = @Dependency(id = "Updatifier", optional = true))
 public class LandProtect {
 
 	public static final String PLUGIN_ID = "com.initianovamc.rysingdragon.landprotect";
-	public static final String PLUGIN_VERSION = "1.1.0-BETA";
+	public static final String PLUGIN_VERSION = "v1.1.0-BETA";
 	public static final String PLUGIN_DESCRIPTION = "A land protection plugin";
 	public static final String PLUGIN_NAME = "LandProtect";
 	public static final String PLUGIN_AUTHOR = "RysingDragon";
