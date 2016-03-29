@@ -118,7 +118,7 @@ public final class Utils {
 		return protectedClaims;
 	}
 	
-	public static List<Vector3i> getClaims(UUID player) {
+	public static List<Vector3i> getOwnedClaims(UUID player) {
 		
 		try {
 			List<Vector3i> claims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)));
@@ -130,6 +130,19 @@ public final class Utils {
 		return new ArrayList<>();
 	}
 
+	public static List<Vector3i> getTrustedClaims(UUID playerUUID) {
+		
+		try {
+			List<Vector3i> trustedList = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", playerUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class)));
+			return trustedList;
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<>();
+		
+	}
+	
 	public static Optional<List<UUID>> getTrustedPlayers(Vector3i chunk) {
 		
 		try {
@@ -147,6 +160,45 @@ public final class Utils {
 		}
 		
 		return Optional.empty();
+	}
+	
+	public static void setClaims(UUID playerUUID, List<Vector3i> claimsList, String claimType) {
+		
+		TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
+		
+		switch(claimType) {
+		
+		case "owned":
+			try {
+				ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", playerUUID.toString(), "OwnedClaims").setValue(token, claimsList);
+				ClaimConfig.getClaimConfig().save();
+			} catch (ObjectMappingException e) {
+				e.printStackTrace();
+			}
+			break;
+		case "trusted":
+			try {
+				ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", playerUUID.toString(), "TrustedClaims").setValue(token, claimsList);
+				ClaimConfig.getClaimConfig().save();
+			} catch (ObjectMappingException e) {
+				e.printStackTrace();
+			}
+			break;
+		
+		}
+		
+	}
+
+	public static void setProtectedClaims(List<Vector3i> claimsList) {
+		
+		TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
+		try {
+			ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", "Protected").setValue(token, claimsList);
+			ClaimConfig.getClaimConfig().save();
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }

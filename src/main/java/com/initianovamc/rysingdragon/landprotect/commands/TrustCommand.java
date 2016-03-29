@@ -29,21 +29,14 @@ public class TrustCommand implements CommandExecutor{
 			if (Utils.isClaimed(chunk)) {
 				if (Utils.getClaimOwner(chunk).isPresent()) {
 					if (player.getUniqueId().equals(Utils.getClaimOwner(chunk).get())) {		
-						try {
-							TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-							List<Vector3i> list = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trustedPlayer.getUniqueId().toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class)));
 						
-							if (!list.contains(chunk)) {
-								list.add(chunk);
-								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trustedPlayer.getUniqueId().toString(), "TrustedClaims").setValue(token, list);
-								ClaimConfig.getClaimConfig().save();
-								player.sendMessage(Text.of("You have granted ", trustedPlayer.getName(), " access to this claim"));
-							} else {
-								player.sendMessage(Text.of(trustedPlayer.getName(), " already has access to this claim"));
-							}
-							
-						} catch (ObjectMappingException e) {
-							e.printStackTrace();
+						List<Vector3i> list = Utils.getTrustedClaims(trustedPlayer.getUniqueId());
+						if (!list.contains(chunk)) {
+							list.add(chunk);
+							Utils.setClaims(trustedPlayer.getUniqueId(), list, "trusted");
+							player.sendMessage(Text.of("You have granted ", trustedPlayer.getName(), " access to this claim"));
+						} else {
+							player.sendMessage(Text.of(trustedPlayer.getName(), " already has access to this claim"));
 						}
 						
 					} else {

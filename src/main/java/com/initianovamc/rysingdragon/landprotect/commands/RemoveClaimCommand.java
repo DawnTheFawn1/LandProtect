@@ -27,7 +27,7 @@ public class RemoveClaimCommand implements CommandExecutor{
 			if (Utils.isClaimed(chunk)) {
 				if (Utils.getClaimOwner(chunk).isPresent()) {
 					UUID owner = Utils.getClaimOwner(chunk).get();
-					List<Vector3i> claims = Utils.getClaims(owner);	
+					List<Vector3i> claims = Utils.getOwnedClaims(owner);	
 					claims.remove(chunk);
 					
 					TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
@@ -43,7 +43,7 @@ public class RemoveClaimCommand implements CommandExecutor{
 						List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk).get();	
 						for (UUID trusted : trustedPlayers) {
 							
-							List<Vector3i> trustedClaims = Utils.getClaims(trusted);
+							List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted);
 							trustedClaims.remove(chunk);
 							try {
 								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.toString(), "TrustedClaims").setValue(token, trustedClaims);

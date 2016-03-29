@@ -30,17 +30,12 @@ public class UnprotectCommand implements CommandExecutor{
 				TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 				if (protectedClaims.contains(chunk)) {
 					protectedClaims.remove(chunk);
-					try {
-						ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", "Protected").setValue(token, protectedClaims);
-						ClaimConfig.getClaimConfig().save();
-						player.sendMessage(Text.of("This claim has been unprotected"));
-					} catch (ObjectMappingException e) {
-						e.printStackTrace();
-					}
+					Utils.setProtectedClaims(protectedClaims);
+					player.sendMessage(Text.of("You have unprotected this land"));
 				} 
 				
 			} else {
-				player.sendMessage(Text.of("This area is not protected"));
+				player.sendMessage(Text.of("This land is not protected"));
 			}
 			
 		} else {

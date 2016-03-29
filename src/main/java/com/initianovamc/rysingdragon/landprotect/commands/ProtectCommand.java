@@ -24,17 +24,11 @@ public class ProtectCommand implements CommandExecutor{
 			Player player = (Player)src;
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			if (!Utils.isClaimed(chunk)) {
-				TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 				List<Vector3i> protectedList = Utils.getProtectedClaims();
 				protectedList.add(chunk);
-				try {
-					ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", "Protected").setValue(token, protectedList);
-				} catch (ObjectMappingException e) {
-					e.printStackTrace();
-				}
-				
-				ClaimConfig.getClaimConfig().save();
+				Utils.setProtectedClaims(protectedList);
 				player.sendMessage(Text.of("You have claimed this chunk"));
+				
 			} else {
 				player.sendMessage(Text.of("This land is already claimed"));
 			}

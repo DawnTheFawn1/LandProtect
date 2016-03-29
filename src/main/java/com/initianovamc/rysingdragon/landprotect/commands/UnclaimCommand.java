@@ -31,15 +31,12 @@ public class UnclaimCommand implements CommandExecutor{
 					UUID owner = Utils.getClaimOwner(chunk).get();
 					
 					if (player.getUniqueId().equals(owner)) {
-						List<Vector3i> claims = Utils.getClaims(player.getUniqueId());
+						List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId());
 						TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 						if (claims.contains(chunk)) {
 							claims.remove(chunk);
-							try {
-								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.getUniqueId().toString(), "OwnedClaims").setValue(token, claims);
-							} catch (ObjectMappingException e) {
-								e.printStackTrace();
-							}
+							Utils.setClaims(player.getUniqueId(), claims, "owned");
+							player.sendMessage(Text.of("You have unclaimed this land"));
 						} else {
 							player.sendMessage(Text.of("You do not own this claim"));
 						}
@@ -47,13 +44,9 @@ public class UnclaimCommand implements CommandExecutor{
 							List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk).get();
 							for (UUID trusted : trustedPlayers) {
 								
-								List<Vector3i> trustedClaims = Utils.getClaims(trusted);
+								List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted);
 								trustedClaims.remove(chunk);
-								try {
-									ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.toString(), "TrustedClaims").setValue(token, trustedClaims);
-								} catch (ObjectMappingException e) {
-									e.printStackTrace();
-								}
+								Utils.setClaims(trusted, trustedClaims, "trusted");
 							}
 						}		
 						

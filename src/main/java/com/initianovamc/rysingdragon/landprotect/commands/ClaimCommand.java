@@ -34,7 +34,7 @@ public class ClaimCommand implements CommandExecutor{
 					if (subject instanceof OptionSubject) {
 						OptionSubject optSubject = (OptionSubject)subject;
 						int claimLimit = Integer.parseInt(optSubject.getOption("claimlimit").orElse("0"));
-						int claims = Utils.getClaims(player.getUniqueId()).size();
+						int claims = Utils.getOwnedClaims(player.getUniqueId()).size();
 						
 						if (claimLimit != 0) {
 							if (claims >= claimLimit) {
@@ -46,21 +46,9 @@ public class ClaimCommand implements CommandExecutor{
 					} 
 				} 
 				
-				List<Vector3i> currentClaims = new ArrayList<>();
-				try {
-					currentClaims = ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.getUniqueId().toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class));
-				} catch (ObjectMappingException e) {
-					e.printStackTrace();
-				}
-				TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-				List<Vector3i> claims = new ArrayList<>(currentClaims);
+				List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId());
 				claims.add(chunk);
-				try {
-					ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.getUniqueId().toString(), "OwnedClaims").setValue(token, claims);
-				} catch (ObjectMappingException e) {
-					e.printStackTrace();
-				}
-				ClaimConfig.getClaimConfig().save();
+				Utils.setClaims(player.getUniqueId(), claims, "owned");
 				
 				player.sendMessage(Text.of("You have claimed this chunk"));
 				

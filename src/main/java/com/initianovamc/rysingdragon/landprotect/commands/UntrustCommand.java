@@ -30,21 +30,15 @@ public class UntrustCommand implements CommandExecutor{
 				if (Utils.getClaimOwner(chunk).isPresent()) {
 					if (player.getUniqueId().equals(Utils.getClaimOwner(chunk).get())) {
 						
-						try {
-							TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-							List<Vector3i> trustedClaims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.getUniqueId().toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class)));
-						
-							if (trustedClaims.contains(chunk)) {
-								trustedClaims.remove(chunk);
-								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.getUniqueId().toString(), "TrustedClaims").setValue(token, trustedClaims);
-								ClaimConfig.getClaimConfig().save();
-								player.sendMessage(Text.of("You have removed ", trusted.getName(), " from access to this claim"));
-							} else {
-								player.sendMessage(Text.of(trusted.getName(), " does not have access to this claim"));
-							}
-							
-						} catch (ObjectMappingException e) {
-							e.printStackTrace();
+						TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
+						List<Vector3i> trustedClaims = Utils.getTrustedClaims(trusted.getUniqueId());
+
+						if (trustedClaims.contains(chunk)) {
+							trustedClaims.remove(chunk);
+							Utils.setClaims(trusted.getUniqueId(), trustedClaims, "trusted");
+							player.sendMessage(Text.of("You have removed ", trusted.getName(), " from access to this claim"));
+						} else {
+							player.sendMessage(Text.of(trusted.getName(), " does not have access to this claim"));
 						}
 					} else {
 						player.sendMessage(Text.of("You do not own this claim"));
