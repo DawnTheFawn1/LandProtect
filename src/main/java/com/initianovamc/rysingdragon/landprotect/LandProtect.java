@@ -26,12 +26,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Updatifier(repoName = "LandProtect", repoOwner = "RysingDragon", version = "v1.1.0-BETA")
+@Updatifier(repoName = "LandProtect", repoOwner = "RysingDragon", version = LandProtect.PLUGIN_VERSION)
 @Plugin(name = LandProtect.PLUGIN_NAME, id = LandProtect.PLUGIN_ID, version = LandProtect.PLUGIN_VERSION, description = LandProtect.PLUGIN_DESCRIPTION, authors = LandProtect.PLUGIN_AUTHOR, dependencies = @Dependency(id = "Updatifier", optional = true))
 public class LandProtect {
 
 	public static final String PLUGIN_ID = "com.initianovamc.rysingdragon.landprotect";
-	public static final String PLUGIN_VERSION = "v1.1.0-BETA";
+	public static final String PLUGIN_VERSION = "v1.2.0-BETA";
 	public static final String PLUGIN_DESCRIPTION = "A land protection plugin";
 	public static final String PLUGIN_NAME = "LandProtect";
 	public static final String PLUGIN_AUTHOR = "RysingDragon";
