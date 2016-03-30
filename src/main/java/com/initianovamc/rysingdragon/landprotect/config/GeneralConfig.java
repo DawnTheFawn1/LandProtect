@@ -56,8 +56,6 @@ public class GeneralConfig implements Configuration{
 	@Override
 	public void setDefaults() {
 		List<String> interactableBlocks = new ArrayList<>();
-		interactableBlocks.add("minecraft:chest");
-		interactableBlocks.add("minecraft:lever");
 		configNode.getNode("Interactable").setValue(interactableBlocks).setComment("blocks that are interactable in protected land");
 	}
 
