@@ -16,9 +16,9 @@ public final class Utils {
 	public static List<FriendRequest> friendRequests = new ArrayList<>();
 	public static List<UUID> inInteractMode = new ArrayList<>();
 
-	public static boolean isClaimed(Vector3i chunk) {
+	public static boolean isClaimed(Vector3i chunk, UUID worldUUID) {
 		
-		for (Vector3i claim : getProtectedClaims()) {
+		for (Vector3i claim : getProtectedClaims(worldUUID)) {
 			if (claim.equals(chunk)) {
 				return true;
 			}
@@ -26,7 +26,7 @@ public final class Utils {
 		
 		try {
 			for (String uuid : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
-				if (ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", uuid, "OwnedClaims").getList(TypeToken.of(Vector3i.class)).contains(chunk)) {
+				if (ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", uuid, "Worlds", worldUUID.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)).contains(chunk)) {
 					return true;
 				}
 			}
@@ -38,9 +38,9 @@ public final class Utils {
 		
 	}
 
-	public static boolean isProtected(Vector3i chunk) {
+	public static boolean isProtected(Vector3i chunk, UUID worldUUID) {
 		
-		for (Vector3i claim : getProtectedClaims()) {
+		for (Vector3i claim : getProtectedClaims(worldUUID)) {
 			if (claim.equals(chunk)) {
 				return true;
 			}
@@ -71,11 +71,11 @@ public final class Utils {
 		return new ArrayList<>();
 	}
 	
-	public static boolean isTrustedToClaim(Vector3i chunk, UUID player) {
+	public static boolean isTrustedToClaim(Vector3i chunk, UUID player, UUID worldUUID) {
 		
-		if (isClaimed(chunk)) {
+		if (isClaimed(chunk, worldUUID)) {
 			try {
-				List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class));
+				List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.toString(), "Worlds", worldUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class));
 				if (claims.contains(chunk)) {
 					return true;
 				}
@@ -87,13 +87,13 @@ public final class Utils {
 		return false;
 	}
 	
-	public static Optional<UUID> getClaimOwner(Vector3i chunk) {
+	public static Optional<UUID> getClaimOwner(Vector3i chunk, UUID worldUUID) {
 		
-		if (isClaimed(chunk)) {
+		if (isClaimed(chunk, worldUUID)) {
 			
 			try {
 				for (String uuid : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
-					if (ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", uuid, "OwnedClaims").getList(TypeToken.of(Vector3i.class)).contains(chunk)) {
+					if (ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", uuid, "Worlds", worldUUID.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)).contains(chunk)) {
 						return Optional.of(UUID.fromString(uuid));
 					}
 				}
@@ -106,11 +106,11 @@ public final class Utils {
 		return Optional.empty();
 	}
 	
-	public static List<Vector3i> getProtectedClaims() {
+	public static List<Vector3i> getProtectedClaims(UUID worldUUID) {
 		
 		List<Vector3i> protectedClaims = new ArrayList<>();
 		try {
-			protectedClaims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", "Protected").getList(TypeToken.of(Vector3i.class), new ArrayList<>()));
+			protectedClaims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", worldUUID.toString(), "Protected").getList(TypeToken.of(Vector3i.class), new ArrayList<>()));
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
 		}
@@ -118,10 +118,10 @@ public final class Utils {
 		return protectedClaims;
 	}
 	
-	public static List<Vector3i> getOwnedClaims(UUID player) {
+	public static List<Vector3i> getOwnedClaims(UUID playerUUID, UUID worldUUID) {
 		
 		try {
-			List<Vector3i> claims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)));
+			List<Vector3i> claims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID.toString(), "Worlds", worldUUID.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)));
 			return claims;
 		
 		} catch (ObjectMappingException e) {
@@ -130,10 +130,10 @@ public final class Utils {
 		return new ArrayList<>();
 	}
 
-	public static List<Vector3i> getTrustedClaims(UUID playerUUID) {
+	public static List<Vector3i> getTrustedClaims(UUID playerUUID, UUID worldUUID) {
 		
 		try {
-			List<Vector3i> trustedList = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", playerUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class)));
+			List<Vector3i> trustedList = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID.toString(), "Worlds", worldUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class)));
 			return trustedList;
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
@@ -143,13 +143,13 @@ public final class Utils {
 		
 	}
 	
-	public static Optional<List<UUID>> getTrustedPlayers(Vector3i chunk) {
+	public static Optional<List<UUID>> getTrustedPlayers(Vector3i chunk, UUID worldUUID) {
 		
 		try {
 			List<String> uuidList = PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class));
 			List<UUID> trustedPlayers = new ArrayList<>();
 			for (String uuidString : uuidList) {
-				List<Vector3i> trustedClaims = ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", uuidString, "TrustedClaims").getList(TypeToken.of(Vector3i.class));
+				List<Vector3i> trustedClaims = Utils.getTrustedClaims(UUID.fromString(uuidString), worldUUID);
 				if (trustedClaims.contains(chunk)) {
 					trustedPlayers.add(UUID.fromString(uuidString));
 				}
@@ -162,7 +162,7 @@ public final class Utils {
 		return Optional.empty();
 	}
 	
-	public static void setClaims(UUID playerUUID, List<Vector3i> claimsList, String claimType) {
+	public static void setClaims(UUID playerUUID, UUID worldUUID, List<Vector3i> claimsList, String claimType) {
 		
 		TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 		
@@ -170,7 +170,7 @@ public final class Utils {
 		
 		case "owned":
 			try {
-				ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", playerUUID.toString(), "OwnedClaims").setValue(token, claimsList);
+				ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID.toString(), "Worlds", worldUUID.toString(), "OwnedClaims").setValue(token, claimsList);
 				ClaimConfig.getClaimConfig().save();
 			} catch (ObjectMappingException e) {
 				e.printStackTrace();
@@ -178,7 +178,7 @@ public final class Utils {
 			break;
 		case "trusted":
 			try {
-				ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", playerUUID.toString(), "TrustedClaims").setValue(token, claimsList);
+				ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID.toString(), "Worlds", worldUUID.toString(), "TrustedClaims").setValue(token, claimsList);
 				ClaimConfig.getClaimConfig().save();
 			} catch (ObjectMappingException e) {
 				e.printStackTrace();
@@ -189,11 +189,11 @@ public final class Utils {
 		
 	}
 
-	public static void setProtectedClaims(List<Vector3i> claimsList) {
+	public static void setProtectedClaims(UUID worldUUID, List<Vector3i> claimsList) {
 		
 		TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 		try {
-			ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", "Protected").setValue(token, claimsList);
+			ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", worldUUID.toString(), "Protected").setValue(token, claimsList);
 			ClaimConfig.getClaimConfig().save();
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();

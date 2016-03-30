@@ -20,16 +20,17 @@ public class PlayerMoveListener {
 		Player player = event.getTargetEntity();
 		Vector3i oldChunk = event.getFromTransform().getLocation().getChunkPosition();
 		Vector3i newChunk = event.getToTransform().getLocation().getChunkPosition();
+		UUID worldUUID = player.getWorld().getUniqueId();
 		
 		if (!oldChunk.equals(newChunk)) {
 			
-			if (Utils.isClaimed(oldChunk) && !Utils.isClaimed(newChunk)) {
+			if (Utils.isClaimed(oldChunk, worldUUID) && !Utils.isClaimed(newChunk, worldUUID)) {
 				player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering unclaimed land"));
 				
-			} else if (!Utils.isClaimed(oldChunk) && Utils.isClaimed(newChunk)) {
+			} else if (!Utils.isClaimed(oldChunk, worldUUID) && Utils.isClaimed(newChunk, worldUUID)) {
 				
-				if (Utils.getClaimOwner(newChunk).isPresent()) {
-					UUID ownerUUID = Utils.getClaimOwner(newChunk).get();
+				if (Utils.getClaimOwner(newChunk, worldUUID).isPresent()) {
+					UUID ownerUUID = Utils.getClaimOwner(newChunk, worldUUID).get();
 					UserStorageService service = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
 					User owner = service.get(ownerUUID).get();
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering the land of ", TextColors.GOLD, owner.getName()));
@@ -37,23 +38,23 @@ public class PlayerMoveListener {
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "protected ", TextColors.DARK_AQUA, "land"));
 				}
 				
-			} else if (Utils.isClaimed(oldChunk) && Utils.isClaimed(newChunk)) {
+			} else if (Utils.isClaimed(oldChunk, worldUUID) && Utils.isClaimed(newChunk, worldUUID)) {
 				
-				if (Utils.isProtected(oldChunk) && Utils.isProtected(newChunk)) {
+				if (Utils.isProtected(oldChunk, worldUUID) && Utils.isProtected(newChunk, worldUUID)) {
 					return;
 					
-				} else if (Utils.getClaimOwner(oldChunk).isPresent() && Utils.isProtected(newChunk)) {
+				} else if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent() && Utils.isProtected(newChunk, worldUUID)) {
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "protected ", TextColors.DARK_AQUA, "land"));
 					
-				} else if (Utils.getClaimOwner(newChunk).isPresent()) {
+				} else if (Utils.getClaimOwner(newChunk, worldUUID).isPresent()) {
 					
-					if (Utils.getClaimOwner(oldChunk).isPresent()) {
-						if (Utils.getClaimOwner(oldChunk).get().equals(Utils.getClaimOwner(newChunk).get())) {
+					if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent()) {
+						if (Utils.getClaimOwner(oldChunk, worldUUID).get().equals(Utils.getClaimOwner(newChunk, worldUUID).get())) {
 							return;
 						}
 					}
 					
-					UUID ownerUUID = Utils.getClaimOwner(newChunk).get();
+					UUID ownerUUID = Utils.getClaimOwner(newChunk, worldUUID).get();
 					UserStorageService service = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
 					User owner = service.get(ownerUUID).get();
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering the land of ", TextColors.GOLD, owner.getName()));

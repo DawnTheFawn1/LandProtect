@@ -1,11 +1,7 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.reflect.TypeToken;
-import com.initianovamc.rysingdragon.landprotect.LandProtect;
-import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -16,8 +12,8 @@ import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.option.OptionSubject;
 import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ClaimCommand implements CommandExecutor{
 
@@ -27,14 +23,15 @@ public class ClaimCommand implements CommandExecutor{
 		if (src instanceof Player) {
 			Player player = (Player)src;
 			Vector3i chunk = player.getLocation().getChunkPosition();
-			if (!Utils.isClaimed(chunk)) {				
+			UUID worldUUID = player.getWorld().getUniqueId();
+			if (!Utils.isClaimed(chunk, worldUUID)) {				
 				
 				if (player instanceof Subject) {
 					Subject subject = player.getContainingCollection().get(player.getIdentifier());
 					if (subject instanceof OptionSubject) {
 						OptionSubject optSubject = (OptionSubject)subject;
 						int claimLimit = Integer.parseInt(optSubject.getOption("claimlimit").orElse("0"));
-						int claims = Utils.getOwnedClaims(player.getUniqueId()).size();
+						int claims = Utils.getOwnedClaims(player.getUniqueId(), worldUUID).size();
 						
 						if (claimLimit != 0) {
 							if (claims >= claimLimit) {
@@ -46,9 +43,9 @@ public class ClaimCommand implements CommandExecutor{
 					} 
 				} 
 				
-				List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId());
+				List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId(), worldUUID);
 				claims.add(chunk);
-				Utils.setClaims(player.getUniqueId(), claims, "owned");
+				Utils.setClaims(player.getUniqueId(), worldUUID, claims, "owned");
 				
 				player.sendMessage(Text.of("You have claimed this chunk"));
 				

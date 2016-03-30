@@ -24,10 +24,12 @@ public class RemoveClaimCommand implements CommandExecutor{
 		if (src instanceof Player) {
 			Player player = (Player)src;
 			Vector3i chunk = player.getLocation().getChunkPosition();
-			if (Utils.isClaimed(chunk)) {
-				if (Utils.getClaimOwner(chunk).isPresent()) {
-					UUID owner = Utils.getClaimOwner(chunk).get();
-					List<Vector3i> claims = Utils.getOwnedClaims(owner);	
+			UUID worldUUID = player.getWorld().getUniqueId();
+			
+			if (Utils.isClaimed(chunk, worldUUID)) {
+				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+					List<Vector3i> claims = Utils.getOwnedClaims(owner, worldUUID);	
 					claims.remove(chunk);
 					
 					TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
@@ -38,12 +40,12 @@ public class RemoveClaimCommand implements CommandExecutor{
 						e.printStackTrace();
 					}
 					
-					if (Utils.getTrustedPlayers(chunk).isPresent()) {
+					if (Utils.getTrustedPlayers(chunk, worldUUID).isPresent()) {
 						
-						List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk).get();	
+						List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk, worldUUID).get();	
 						for (UUID trusted : trustedPlayers) {
 							
-							List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted);
+							List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted, worldUUID);
 							trustedClaims.remove(chunk);
 							try {
 								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.toString(), "TrustedClaims").setValue(token, trustedClaims);

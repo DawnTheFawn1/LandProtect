@@ -22,6 +22,8 @@ public class InteractBlockListener {
 		
 		if (event.getCause().containsType(Player.class)) {
 			
+			UUID worldUUID = player.getWorld().getUniqueId();
+			
 			if (Utils.inInteractMode.contains(player.getUniqueId())) {
 				Utils.inInteractMode.remove(player.getUniqueId());
 				event.setCancelled(true);
@@ -39,9 +41,9 @@ public class InteractBlockListener {
 			if (event.getTargetBlock().getLocation().isPresent()) {
 				Vector3i chunk = event.getTargetBlock().getLocation().get().getChunkPosition();
 				
-				if (Utils.isClaimed(chunk)) {
+				if (Utils.isClaimed(chunk, worldUUID)) {
 				
-					if (Utils.isProtected(chunk)) {
+					if (Utils.isProtected(chunk, worldUUID)) {
 						
 						if (player.hasPermission("landprotect.protect.bypass")) {
 							return;
@@ -58,12 +60,12 @@ public class InteractBlockListener {
 						
 					}
 					
-					if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+					if (Utils.isTrustedToClaim(chunk, player.getUniqueId(), worldUUID)) {
 						return;
 					}
 					
-					if (Utils.getClaimOwner(chunk).isPresent()) {
-						UUID owner = Utils.getClaimOwner(chunk).get();
+					if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+						UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
 						if (owner.equals(player.getUniqueId())) {
 							return;
 						} else if (Utils.isFriend(owner, player.getUniqueId())) {

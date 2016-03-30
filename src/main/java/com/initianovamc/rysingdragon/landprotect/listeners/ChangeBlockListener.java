@@ -15,9 +15,10 @@ public class ChangeBlockListener {
 	@Listener
 	public void onBreak(ChangeBlockEvent.Break event, @Root Player player) {
 		Vector3i chunk = player.getLocation().getChunkPosition();
-		if (Utils.isClaimed(chunk)) {
-			if (Utils.getClaimOwner(chunk).isPresent()) {
-				UUID owner = Utils.getClaimOwner(chunk).get();
+		UUID worldUUID = player.getWorld().getUniqueId();
+		if (Utils.isClaimed(chunk, worldUUID)) {
+			if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+				UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
 				if (owner.equals(player.getUniqueId())) {
 					return;
 				}
@@ -26,7 +27,7 @@ public class ChangeBlockListener {
 					return;
 				}
 				
-				if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+				if (Utils.isTrustedToClaim(chunk, player.getUniqueId(), worldUUID)) {
 					return;
 				}
 				
@@ -47,9 +48,11 @@ public class ChangeBlockListener {
 	@Listener
 	public void onPlace(ChangeBlockEvent.Place event, @Root Player player) {
 		Vector3i chunk = player.getLocation().getChunkPosition();
-		if (Utils.isClaimed(chunk)) {
-			if (Utils.getClaimOwner(chunk).isPresent()) {
-				UUID owner = Utils.getClaimOwner(chunk).get();
+		UUID worldUUID = player.getWorld().getUniqueId();
+		
+		if (Utils.isClaimed(chunk, worldUUID)) {
+			if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+				UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
 				if (owner.equals(player.getUniqueId())) {
 					return;
 				}
@@ -57,7 +60,7 @@ public class ChangeBlockListener {
 					return;
 				}
 				
-				if (Utils.isTrustedToClaim(chunk, player.getUniqueId())) {
+				if (Utils.isTrustedToClaim(chunk, player.getUniqueId(), worldUUID)) {
 					return;
 				}
 				

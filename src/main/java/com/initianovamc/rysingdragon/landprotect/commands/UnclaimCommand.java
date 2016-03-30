@@ -24,29 +24,30 @@ public class UnclaimCommand implements CommandExecutor{
 		if (src instanceof Player) {
 			Player player = (Player)src;
 			Vector3i chunk = player.getLocation().getChunkPosition();
+			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (Utils.isClaimed(chunk)) {
+			if (Utils.isClaimed(chunk, worldUUID)) {
 				
-				if (Utils.getClaimOwner(chunk).isPresent()) {	
-					UUID owner = Utils.getClaimOwner(chunk).get();
+				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {	
+					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
 					
 					if (player.getUniqueId().equals(owner)) {
-						List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId());
+						List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId(), worldUUID);
 						TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 						if (claims.contains(chunk)) {
 							claims.remove(chunk);
-							Utils.setClaims(player.getUniqueId(), claims, "owned");
+							Utils.setClaims(player.getUniqueId(), worldUUID, claims, "owned");
 							player.sendMessage(Text.of("You have unclaimed this land"));
 						} else {
 							player.sendMessage(Text.of("You do not own this claim"));
 						}
-						if (Utils.getTrustedPlayers(chunk).isPresent()) {
-							List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk).get();
+						if (Utils.getTrustedPlayers(chunk, worldUUID).isPresent()) {
+							List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk, worldUUID).get();
 							for (UUID trusted : trustedPlayers) {
 								
-								List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted);
+								List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted, worldUUID);
 								trustedClaims.remove(chunk);
-								Utils.setClaims(trusted, trustedClaims, "trusted");
+								Utils.setClaims(trusted, worldUUID, trustedClaims, "trusted");
 							}
 						}		
 						

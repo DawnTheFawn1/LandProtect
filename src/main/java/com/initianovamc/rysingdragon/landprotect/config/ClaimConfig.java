@@ -57,7 +57,8 @@ public class ClaimConfig implements Configuration{
 	}
 	
 	public void setDefaults() {
-		configNode.getNode("claims").setComment("All claims will be stored here.");
+		configNode.getNode("PlayerClaims").setComment("All player claims will be stored here.");
+		configNode.getNode("ProtectedClaims").setComment("All protected claims will be stored here");
 	}
 	
 	public static ClaimConfig getClaimConfig() {
