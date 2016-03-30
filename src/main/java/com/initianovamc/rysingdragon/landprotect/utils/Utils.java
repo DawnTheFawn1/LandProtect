@@ -3,6 +3,7 @@ package com.initianovamc.rysingdragon.landprotect.utils;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.reflect.TypeToken;
 import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
+import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
@@ -199,6 +200,10 @@ public final class Utils {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public static boolean claimingEnabled(UUID worldUUID) {
+		return GeneralConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "ClaimingEnabled").getBoolean();
 	}
 	
 }

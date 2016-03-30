@@ -24,6 +24,12 @@ public class ClaimCommand implements CommandExecutor{
 			Player player = (Player)src;
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
+			
+			if (!Utils.claimingEnabled(worldUUID)) {
+				player.sendMessage(Text.of("Claiming is not enabled in this world"));
+				return CommandResult.success();
+			}
+			
 			if (!Utils.isClaimed(chunk, worldUUID)) {				
 				
 				if (player instanceof Subject) {
