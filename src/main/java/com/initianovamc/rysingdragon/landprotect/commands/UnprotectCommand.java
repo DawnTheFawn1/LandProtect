@@ -10,6 +10,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,15 +32,15 @@ public class UnprotectCommand implements CommandExecutor{
 				if (protectedClaims.contains(chunk)) {
 					protectedClaims.remove(chunk);
 					Utils.setProtectedClaims(worldUUID, protectedClaims);
-					player.sendMessage(Text.of("You have unprotected this land"));
+					player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have unprotected this land"));
 				} 
 				
 			} else {
-				player.sendMessage(Text.of("This land is not protected"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is not protected"));
 			}
 			
 		} else {
-			src.sendMessage(Text.of("You must be a player to use this command"));
+			src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command"));
 		}
 		
 		return CommandResult.success();

@@ -9,6 +9,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,15 +28,15 @@ public class ProtectCommand implements CommandExecutor{
 				List<Vector3i> protectedList = Utils.getProtectedClaims(worldUUID);
 				protectedList.add(chunk);
 				Utils.setProtectedClaims(worldUUID, protectedList);
-				player.sendMessage(Text.of("You have claimed this chunk"));
+				player.sendMessage(Text.of(TextColors.RED, "You have claimed this chunk"));
 				
 			} else {
-				player.sendMessage(Text.of("This land is already claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));
 			}
 			return CommandResult.success();
 			
 		} else {
-			src.sendMessage(Text.of("You must be a player to use this command"));
+			src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command"));
 			return CommandResult.empty();
 		}
 	}

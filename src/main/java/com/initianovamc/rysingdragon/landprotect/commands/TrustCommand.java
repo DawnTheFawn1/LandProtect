@@ -9,6 +9,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,21 +33,21 @@ public class TrustCommand implements CommandExecutor{
 						if (!list.contains(chunk)) {
 							list.add(chunk);
 							Utils.setClaims(trustedPlayer.getUniqueId(), worldUUID, list, "trusted");
-							player.sendMessage(Text.of("You have granted ", trustedPlayer.getName(), " access to this claim"));
+							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have granted ", TextColors.GOLD, trustedPlayer.getName(), TextColors.DARK_AQUA, " access to this claim"));
 						} else {
-							player.sendMessage(Text.of(trustedPlayer.getName(), " already has access to this claim"));
+							player.sendMessage(Text.of(TextColors.GOLD, trustedPlayer.getName(), TextColors.DARK_AQUA, " already has access to this claim"));
 						}
 						
 					} else {
-						player.sendMessage(Text.of("You are not the owner of this claim"));
+						player.sendMessage(Text.of(TextColors.RED, "You are not the owner of this claim"));
 					}
 					
 				} else {
-					player.sendMessage(Text.of("This is Protected land"));
+					player.sendMessage(Text.of(TextColors.RED, "This is Protected land"));
 				}
 				
 			} else {
-				player.sendMessage(Text.of("This land is not claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
 			}
 			
 		}

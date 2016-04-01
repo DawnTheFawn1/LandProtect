@@ -9,6 +9,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class RemoveFriendCommand implements CommandExecutor{
 					PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", player.getUniqueId().toString(), "friendlist").setValue(playerList);
 					PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", friend.getUniqueId().toString(), "friendlist").setValue(friendList);
 					PlayerConfig.getPlayerConfig().save();
-					player.sendMessage(Text.of("You and ", friend.getName(), " are no longer friends"));
-					friend.sendMessage(Text.of(player.getName(), " has deleted you as a friend"));
+					player.sendMessage(Text.of(TextColors.AQUA, "You and ", TextColors.GOLD, friend.getName(), TextColors.DARK_AQUA, " are no longer friends"));
+					friend.sendMessage(Text.of(TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, " has deleted you as a friend"));
 				}
 			}
 		}

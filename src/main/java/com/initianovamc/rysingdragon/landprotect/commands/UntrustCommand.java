@@ -10,6 +10,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,20 +36,20 @@ public class UntrustCommand implements CommandExecutor{
 						if (trustedClaims.contains(chunk)) {
 							trustedClaims.remove(chunk);
 							Utils.setClaims(trusted.getUniqueId(), worldUUID, trustedClaims, "trusted");
-							player.sendMessage(Text.of("You have removed ", trusted.getName(), " from access to this claim"));
+							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have removed ", TextColors.GOLD, trusted.getName(), TextColors.DARK_AQUA, " from access to this claim"));
 						} else {
-							player.sendMessage(Text.of(trusted.getName(), " does not have access to this claim"));
+							player.sendMessage(Text.of(TextColors.GOLD, trusted.getName(), TextColors.DARK_AQUA, " does not have access to this claim"));
 						}
 					} else {
-						player.sendMessage(Text.of("You do not own this claim"));
+						player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
 					}
 					
 				} else {
-					player.sendMessage(Text.of("You may not give trust to a protected claim"));
+					player.sendMessage(Text.of(TextColors.RED, "You may not give trust to a protected claim"));
 				}	
 				
 			} else {
-				player.sendMessage(Text.of("This land is not claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
 			}
 		}
 		

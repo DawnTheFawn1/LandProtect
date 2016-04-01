@@ -11,6 +11,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,13 @@ public class AddInteractable implements CommandExecutor{
 					interactables.add(id);
 					GeneralConfig.getConfig().getConfigNode().getNode("Interactable").setValue(interactables);
 					GeneralConfig.getConfig().save();
+					player.sendMessage(Text.of(TextColors.GOLD, id, TextColors.DARK_AQUA, " has been added as interactable"));
 				} catch (ObjectMappingException e) {
 					e.printStackTrace();
 				}
 			} else {
 				Utils.inInteractMode.add(player.getUniqueId());
-				player.sendMessage(Text.of("Right click a block to add it as interactable"));
+				player.sendMessage(Text.of(TextColors.DARK_AQUA, "Right click a block to add it as interactable"));
 			}
 			
 		}

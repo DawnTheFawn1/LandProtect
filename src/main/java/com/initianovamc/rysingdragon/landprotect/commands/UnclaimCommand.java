@@ -12,6 +12,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class UnclaimCommand implements CommandExecutor{
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
 			if (!Utils.claimingEnabled(worldUUID)) {
-				player.sendMessage(Text.of("Claiming is not enabled in this world"));
+				player.sendMessage(Text.of(TextColors.RED, "Claiming is not enabled in this world"));
 				return CommandResult.success();
 			}
 			
@@ -42,9 +43,9 @@ public class UnclaimCommand implements CommandExecutor{
 						if (claims.contains(chunk)) {
 							claims.remove(chunk);
 							Utils.setClaims(player.getUniqueId(), worldUUID, claims, "owned");
-							player.sendMessage(Text.of("You have unclaimed this land"));
+							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have unclaimed this land"));
 						} else {
-							player.sendMessage(Text.of("You do not own this claim"));
+							player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
 						}
 						if (Utils.getTrustedPlayers(chunk, worldUUID).isPresent()) {
 							List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk, worldUUID).get();
@@ -57,17 +58,17 @@ public class UnclaimCommand implements CommandExecutor{
 						}		
 						
 					} else {
-						player.sendMessage(Text.of("You do not own this claim"));
+						player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
 					}
 					
 				}
 				
 			} else {
-				player.sendMessage(Text.of("This land is not claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
 			}
 			
 		} else {
-			src.sendMessage(Text.of("You must be a player to use this command"));
+			src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command"));
 		}
 		
 		return CommandResult.success();

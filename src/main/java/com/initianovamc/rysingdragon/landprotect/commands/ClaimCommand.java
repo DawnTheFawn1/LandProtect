@@ -11,6 +11,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.option.OptionSubject;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +27,7 @@ public class ClaimCommand implements CommandExecutor{
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
 			if (!Utils.claimingEnabled(worldUUID)) {
-				player.sendMessage(Text.of("Claiming is not enabled in this world"));
+				player.sendMessage(Text.of(TextColors.RED, "Claiming is not enabled in this world"));
 				return CommandResult.success();
 			}
 			
@@ -41,7 +42,7 @@ public class ClaimCommand implements CommandExecutor{
 						
 						if (claimLimit != 0) {
 							if (claims >= claimLimit) {
-								player.sendMessage(Text.of("You have reached the max claim limit"));
+								player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have reached the max claim limit"));
 								return CommandResult.success();
 							} 
 						}
@@ -53,15 +54,15 @@ public class ClaimCommand implements CommandExecutor{
 				claims.add(chunk);
 				Utils.setClaims(player.getUniqueId(), worldUUID, claims, "owned");
 				
-				player.sendMessage(Text.of("You have claimed this chunk"));
+				player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk"));
 				
 			} else {
-				player.sendMessage(Text.of("This land is already claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));
 			}
 			return CommandResult.success();
 			
 		} else {
-			src.sendMessage(Text.of("You must be a player to use this command"));
+			src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command"));
 			return CommandResult.empty();
 		}
 	}

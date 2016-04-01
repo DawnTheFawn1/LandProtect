@@ -12,6 +12,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class RemoveClaimCommand implements CommandExecutor{
 					TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
 					try {
 						ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", owner.toString(), "OwnedClaims").setValue(token, claims);
-						player.sendMessage(Text.of("You have successfully removed this claim"));
+						player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have successfully removed this claim"));
 					} catch (ObjectMappingException e) {
 						e.printStackTrace();
 					}
@@ -57,10 +58,10 @@ public class RemoveClaimCommand implements CommandExecutor{
 					}
 					
 				} else {
-					player.sendMessage(Text.of("This land is not claimed by a player, use /lp unprotect to remove protected land"));
+					player.sendMessage(Text.of(TextColors.DARK_AQUA, "This land is not claimed by a player, use /lp unprotect to remove protected land"));
 				}
 			} else {
-				player.sendMessage(Text.of("This land is not claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
 			}
 		}
 		

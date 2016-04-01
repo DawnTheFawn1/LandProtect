@@ -10,6 +10,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,7 @@ public class InteractBlockListener {
 						return;
 					}	
 					event.setCancelled(true);
+					player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
 				}
 			}
 		}

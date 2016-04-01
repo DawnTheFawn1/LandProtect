@@ -15,6 +15,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,8 +48,8 @@ public class AcceptFriendRequestCommand implements CommandExecutor{
 								PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", request.getRequester().toString(), "friendlist").setValue(playerFriendList);
 								PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", request.getFriend().toString(), "friendlist").setValue(friendList);
 								PlayerConfig.getPlayerConfig().save();
-								player.sendMessage(Text.of("You and ", user.getName(), " are now friends"));
-								user.getPlayer().get().sendMessage(Text.of("You and ", player.getName(), " are now friends"));
+								player.sendMessage(Text.of(TextColors.DARK_AQUA, "You and ", TextColors.GOLD, user.getName(), TextColors.DARK_AQUA, " are now friends"));
+								user.getPlayer().get().sendMessage(Text.of(TextColors.DARK_AQUA, "You and ", TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, " are now friends"));
 								iterator.remove();
 							}
 							

@@ -7,6 +7,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.UUID;
 
@@ -41,7 +42,7 @@ public class ChangeBlockListener {
 			}
 			
 			event.setCancelled(true);
-			player.sendMessage(Text.of("This land is claimed"));
+			player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
 		}
 	}
 	
@@ -75,7 +76,7 @@ public class ChangeBlockListener {
 			}
 			
 			event.setCancelled(true);
-			player.sendMessage(Text.of("This land is claimed"));
+			player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
 		}
 	}
 	

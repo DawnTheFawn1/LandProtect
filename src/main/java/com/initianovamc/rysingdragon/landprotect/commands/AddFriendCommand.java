@@ -13,6 +13,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -30,16 +31,17 @@ public class AddFriendCommand implements CommandExecutor{
 			
 			for (FriendRequest request : Utils.friendRequests) {
 				if (request.getFriend().equals(friend.getUniqueId())) {
-					player.sendMessage(Text.of("You already have an invite to that player"));
+					player.sendMessage(Text.of(TextColors.RED, "You already have a pending invite to ", TextColors.GOLD, friend.getName()));
 					return CommandResult.success();
 				}
 				if (request.getRequester().equals(friend.getUniqueId())) {
-					player.sendMessage(Text.of("You already have a pending invitation from ", friend.getName()));
+					player.sendMessage(Text.of(TextColors.RED, "You already have a pending invitation from ", TextColors.GOLD, friend.getName()));
+					return CommandResult.success();
 				}
 			}
 			
-			player.sendMessage(Text.of("You have sent a friend request to ", friend.getName(), ", They have 60 seconds to accept"));
-			friend.sendMessage(Text.of("You have a pending friend request from ", player.getName(), "You have 60 seconds to accept"));
+			player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have sent a friend request to ", TextColors.GOLD, friend.getName(), TextColors.DARK_AQUA, ", They have 60 seconds to accept"));
+			friend.sendMessage(Text.of(TextColors.DARK_AQUA, "You have a pending friend request from ", TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, "You have 60 seconds to accept"));
 			
 			Utils.friendRequests.add(new FriendRequest(player.getUniqueId(), friend.getUniqueId()));
 			
