@@ -119,6 +119,13 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("untrust"), untrust);
 		
+		CommandSpec interactableList = CommandSpec.builder()
+				.description(Text.of("List all interactable blocks"))
+				.permission("landprotect.listinteractables")
+				.executor(new InteractableListCommand())
+				.build();
+		commands.put(Arrays.asList("listinteractables"), interactableList);
+		
 		return commands;
 		
 	}
