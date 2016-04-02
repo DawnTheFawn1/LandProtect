@@ -27,11 +27,6 @@ public class UnclaimCommand implements CommandExecutor{
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (!Utils.claimingEnabled(worldUUID)) {
-				player.sendMessage(Text.of(TextColors.RED, "Claiming is not enabled in this world"));
-				return CommandResult.success();
-			}
-			
 			if (Utils.isClaimed(chunk, worldUUID)) {
 				
 				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {	

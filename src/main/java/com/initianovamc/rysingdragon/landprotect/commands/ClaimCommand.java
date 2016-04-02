@@ -42,7 +42,7 @@ public class ClaimCommand implements CommandExecutor{
 						
 						if (claimLimit != 0) {
 							if (claims >= claimLimit) {
-								player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have reached the max claim limit"));
+								player.sendMessage(Text.of(TextColors.RED, "You have reached the max claim limit"));
 								return CommandResult.success();
 							} 
 						}

@@ -29,6 +29,11 @@ public class AddFriendCommand implements CommandExecutor{
 			Player player = (Player)src;
 			Player friend = (Player) args.getOne("friend").get();
 			
+			if (friend.getUniqueId().equals(player.getUniqueId())) {
+				player.sendMessage(Text.of(TextColors.RED, "You may not add yourself as a friend"));
+				return CommandResult.success();
+			}
+			
 			for (FriendRequest request : Utils.friendRequests) {
 				if (request.getFriend().equals(friend.getUniqueId())) {
 					player.sendMessage(Text.of(TextColors.RED, "You already have a pending invite to ", TextColors.GOLD, friend.getName()));
