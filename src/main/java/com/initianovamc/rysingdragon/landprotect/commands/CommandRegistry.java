@@ -126,6 +126,14 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("listinteractables"), interactableList);
 		
+		CommandSpec removeInteractable = CommandSpec.builder()
+				.description(Text.of("Remove a block from being interactable"))
+				.permission("landprotect.removeinteractable")
+				.executor(new RemoveInteractableCommand())
+				.arguments(GenericArguments.optional(GenericArguments.string(Text.of("block-id"))))
+				.build();
+		commands.put(Arrays.asList("removeinteractable"), removeInteractable);
+		
 		return commands;
 		
 	}

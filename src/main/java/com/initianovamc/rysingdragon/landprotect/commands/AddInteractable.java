@@ -47,7 +47,7 @@ public class AddInteractable implements CommandExecutor{
 					e.printStackTrace();
 				}
 			} else {
-				Utils.inInteractMode.add(player.getUniqueId());
+				Utils.inAddInteractMode.add(player.getUniqueId());
 				player.sendMessage(Text.of(TextColors.DARK_AQUA, "Right click a block to add it as interactable"));
 			}
 			

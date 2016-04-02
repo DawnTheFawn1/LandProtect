@@ -25,8 +25,8 @@ public class InteractBlockListener {
 			
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (Utils.inInteractMode.contains(player.getUniqueId())) {
-				Utils.inInteractMode.remove(player.getUniqueId());
+			if (Utils.inAddInteractMode.contains(player.getUniqueId())) {
+				Utils.inAddInteractMode.remove(player.getUniqueId());
 				event.setCancelled(true);
 				try {
 					List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
@@ -38,6 +38,24 @@ public class InteractBlockListener {
 					GeneralConfig.getConfig().getConfigNode().getNode("Interactable").setValue(interactables);
 					GeneralConfig.getConfig().save();
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "id ", TextColors.GOLD, event.getTargetBlock().getState().getType().getName(), TextColors.DARK_AQUA, " has been added to the list of interactable blocks"));
+				} catch (ObjectMappingException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (Utils.inRemoveInteractMode.contains(player.getUniqueId())) {
+				Utils.inRemoveInteractMode.remove(player.getUniqueId());
+				event.setCancelled(true);
+				try {
+					List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
+					if (!interactables.contains(event.getTargetBlock().getState().getType().getId())) {
+						player.sendMessage(Text.of(TextColors.RED, "This block has not yet been added as interactable"));
+						return;
+					}
+					interactables.remove(event.getTargetBlock().getState().getType().getId());
+					GeneralConfig.getConfig().getConfigNode().getNode("Interactable").setValue(interactables);
+					GeneralConfig.getConfig().save();
+					player.sendMessage(Text.of(TextColors.DARK_AQUA, "id ", TextColors.GOLD, event.getTargetBlock().getState().getType().getName(), TextColors.DARK_AQUA, " has been removed from the list of interactable blocks"));
 				} catch (ObjectMappingException e) {
 					e.printStackTrace();
 				}
