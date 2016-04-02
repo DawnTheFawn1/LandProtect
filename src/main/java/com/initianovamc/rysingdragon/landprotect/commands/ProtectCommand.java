@@ -28,7 +28,7 @@ public class ProtectCommand implements CommandExecutor{
 				List<Vector3i> protectedList = Utils.getProtectedClaims(worldUUID);
 				protectedList.add(chunk);
 				Utils.setProtectedClaims(worldUUID, protectedList);
-				player.sendMessage(Text.of(TextColors.RED, "You have claimed this chunk"));
+				player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have protected this chunk"));
 				
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));

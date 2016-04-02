@@ -76,6 +76,7 @@ public class InteractBlockListener {
 							List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
 							if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
 								event.setCancelled(true);
+								player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
 							}
 						} catch (ObjectMappingException e) {
 							e.printStackTrace();

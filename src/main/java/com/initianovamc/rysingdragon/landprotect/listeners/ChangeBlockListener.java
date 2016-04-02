@@ -15,7 +15,7 @@ public class ChangeBlockListener {
 
 	@Listener
 	public void onBreak(ChangeBlockEvent.Break event, @Root Player player) {
-		Vector3i chunk = player.getLocation().getChunkPosition();
+		Vector3i chunk = event.getTransactions().get(0).getFinal().getLocation().get().getChunkPosition();
 		UUID worldUUID = player.getWorld().getUniqueId();
 		if (Utils.isClaimed(chunk, worldUUID)) {
 			if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
@@ -48,7 +48,7 @@ public class ChangeBlockListener {
 	
 	@Listener
 	public void onPlace(ChangeBlockEvent.Place event, @Root Player player) {
-		Vector3i chunk = player.getLocation().getChunkPosition();
+		Vector3i chunk = event.getTransactions().get(0).getFinal().getLocation().get().getChunkPosition();
 		UUID worldUUID = player.getWorld().getUniqueId();
 		
 		if (Utils.isClaimed(chunk, worldUUID)) {
