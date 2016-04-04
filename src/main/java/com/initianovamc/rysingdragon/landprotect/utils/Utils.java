@@ -65,7 +65,7 @@ public final class Utils {
 	public static List<String> getFriendList(UUID playerUUID) {
 		
 		try {
-			List<String> friendList = PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", playerUUID, "friendlist").getList(TypeToken.of(String.class));
+			List<String> friendList = PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", playerUUID.toString(), "friendlist").getList(TypeToken.of(String.class));
 			return friendList;
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
@@ -77,7 +77,7 @@ public final class Utils {
 		
 		if (isClaimed(chunk, worldUUID)) {
 			try {
-				List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", player.toString(), "Worlds", worldUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class));
+				List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", player.toString(), "Worlds", worldUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class));
 				if (claims.contains(chunk)) {
 					return true;
 				}

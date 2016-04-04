@@ -34,6 +34,11 @@ public class AddFriendCommand implements CommandExecutor{
 				return CommandResult.success();
 			}
 			
+			if (Utils.isFriend(player.getUniqueId(), friend.getUniqueId())) {
+				player.sendMessage(Text.of(TextColors.RED, "You and ", friend.getName(), " are already friends"));
+				return CommandResult.success();
+			}
+			
 			for (FriendRequest request : Utils.friendRequests) {
 				if (request.getFriend().equals(friend.getUniqueId())) {
 					player.sendMessage(Text.of(TextColors.RED, "You already have a pending invite to ", TextColors.GOLD, friend.getName()));
@@ -47,21 +52,21 @@ public class AddFriendCommand implements CommandExecutor{
 			
 			player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have sent a friend request to ", TextColors.GOLD, friend.getName(), TextColors.DARK_AQUA, ", They have 60 seconds to accept"));
 			friend.sendMessage(Text.of(TextColors.DARK_AQUA, "You have a pending friend request from ", TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, "You have 60 seconds to accept"));
-			
-			Utils.friendRequests.add(new FriendRequest(player.getUniqueId(), friend.getUniqueId()));
+			FriendRequest friendRequest = new FriendRequest(player.getUniqueId(), friend.getUniqueId());
+			Utils.friendRequests.add(friendRequest);
 			
 			Scheduler scheduler = Sponge.getGame().getScheduler();
 			Task.Builder taskBuilder = scheduler.createTaskBuilder();
-			Task task = taskBuilder.execute(new CancellingTask(friend.getUniqueId())).interval(1, TimeUnit.SECONDS).name("LandProtect Friend Request Task").submit(LandProtect.instance);
+			Task task = taskBuilder.execute(new CancellingTask(friendRequest)).interval(1, TimeUnit.SECONDS).name("LandProtect Friend Request Task").submit(LandProtect.instance);
 		}
 		
 		return CommandResult.success();
 	}
 
 	private class CancellingTask implements Consumer<Task> {
-		private UUID friend;
-		public CancellingTask(UUID friend) {
-			this.friend = friend;
+		private FriendRequest friendRequest;
+		public CancellingTask(FriendRequest friendRequest) {
+			this.friendRequest = friendRequest;
 		}
 		
 		private int timeLeft = 60;
@@ -69,7 +74,7 @@ public class AddFriendCommand implements CommandExecutor{
 		public void accept(Task t) {
 			--timeLeft;
 			if (timeLeft < 1) {
-				Utils.friendRequests.remove(friend);
+				Utils.friendRequests.remove(friendRequest);
 				t.cancel();
 			}	
 		}
