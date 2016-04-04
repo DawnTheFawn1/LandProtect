@@ -32,14 +32,7 @@ public class RemoveClaimCommand implements CommandExecutor{
 					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
 					List<Vector3i> claims = Utils.getOwnedClaims(owner, worldUUID);	
 					claims.remove(chunk);
-					
-					TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-					try {
-						ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", owner.toString(), "OwnedClaims").setValue(token, claims);
-						player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have successfully removed this claim"));
-					} catch (ObjectMappingException e) {
-						e.printStackTrace();
-					}
+					Utils.setClaims(owner, worldUUID, claims, "owned");
 					
 					if (Utils.getTrustedPlayers(chunk, worldUUID).isPresent()) {
 						
@@ -48,11 +41,7 @@ public class RemoveClaimCommand implements CommandExecutor{
 							
 							List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted, worldUUID);
 							trustedClaims.remove(chunk);
-							try {
-								ClaimConfig.getClaimConfig().getConfigNode().getNode("claims", trusted.toString(), "TrustedClaims").setValue(token, trustedClaims);
-							} catch (ObjectMappingException e) {
-								e.printStackTrace();
-							}
+							Utils.setClaims(trusted, worldUUID, trustedClaims, "trusted");
 						}
 						
 					}
