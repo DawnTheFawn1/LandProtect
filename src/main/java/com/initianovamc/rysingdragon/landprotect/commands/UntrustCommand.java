@@ -9,6 +9,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -22,7 +23,7 @@ public class UntrustCommand implements CommandExecutor{
 		
 		if (src instanceof Player) {
 			Player player = (Player)src;
-			Player trusted = (Player)args.getOne("player").get();
+			User trusted = (Player)args.getOne("player").get();
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			

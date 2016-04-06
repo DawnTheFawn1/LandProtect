@@ -71,7 +71,7 @@ public class CommandRegistry {
 				.description(Text.of("Adds the player access to your claim you're standing in"))
 				.permission("landprotect.trust")
 				.executor(new TrustCommand())
-				.arguments(GenericArguments.player(Text.of("player")))
+				.arguments(GenericArguments.user(Text.of("player")))
 				.build();
 		commands.put(Arrays.asList("trust"), trust);
 		
@@ -107,7 +107,7 @@ public class CommandRegistry {
 				.description(Text.of("removes the targeted player as a friend"))
 				.permission("landprotect.removefriend")
 				.executor(new RemoveFriendCommand())
-				.arguments(GenericArguments.player(Text.of("friend")))
+				.arguments(GenericArguments.user(Text.of("friend")))
 				.build();
 		commands.put(Arrays.asList("removefriend"), removeFriend);
 		
@@ -115,7 +115,7 @@ public class CommandRegistry {
 				.description(Text.of("Remove a player as trusted from your land"))
 				.permission("landprotect.untrust")
 				.executor(new UntrustCommand())
-				.arguments(GenericArguments.player(Text.of("player")))
+				.arguments(GenericArguments.user(Text.of("player")))
 				.build();
 		commands.put(Arrays.asList("untrust"), untrust);
 		
