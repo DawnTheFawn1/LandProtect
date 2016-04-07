@@ -6,6 +6,8 @@ import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,6 +207,11 @@ public final class Utils {
 
 	public static boolean claimingEnabled(UUID worldUUID) {
 		return GeneralConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "ClaimingEnabled").getBoolean();
+	}
+	
+	public static double getYCoordinate(Location<World> location) {
+		//TODO implement for getting the max y coordinate of the top surface block.
+		return 0;
 	}
 	
 }
