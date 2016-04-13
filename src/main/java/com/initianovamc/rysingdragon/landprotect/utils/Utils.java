@@ -6,11 +6,12 @@ import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public final class Utils {
 	public static List<FriendRequest> friendRequests = new ArrayList<>();
 	public static List<UUID> inAddInteractMode = new ArrayList<>();
 	public static List<UUID> inRemoveInteractMode = new ArrayList<>();
+	public static Map<UUID, Map<Vector3i, ClaimBoundary>> playerBoundaries = new HashMap<>();
 
 	public static boolean isClaimed(Vector3i chunk, UUID worldUUID) {
 		
@@ -169,7 +171,7 @@ public final class Utils {
 	public static void setClaims(UUID playerUUID, UUID worldUUID, List<Vector3i> claimsList, String claimType) {
 		
 		TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-		
+
 		switch(claimType) {
 		
 		case "owned":
@@ -209,9 +211,20 @@ public final class Utils {
 		return GeneralConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "ClaimingEnabled").getBoolean();
 	}
 	
-	public static double getYCoordinate(Location<World> location) {
-		//TODO implement for getting the max y coordinate of the top surface block.
-		return 0;
+	public static String getBoundaryBlock() {
+		if (GeneralConfig.getConfig().getConfigNode().getNode("BoundaryBlock").getString() != null) {
+			return GeneralConfig.getConfig().getConfigNode().getNode("BoundaryBlock").getString();
+		} else {
+			return "minecraft:coal_block";
+		}
+	}
+	
+	public static String getClaimInspectTool() {
+		if (GeneralConfig.getConfig().getConfigNode().getNode("InspectTool").getString() != null) {
+			return GeneralConfig.getConfig().getConfigNode().getNode("InspectTool").getString();
+		} else {
+			return "minecraft:wooden_axe";
+		}
 	}
 	
 }

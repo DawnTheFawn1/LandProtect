@@ -134,6 +134,29 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("removeinteractable"), removeInteractable);
 		
+		CommandSpec reloadConfig = CommandSpec.builder()
+				.description(Text.of())
+				.permission("landprotect.reloadconfig")
+				.executor(new ReloadConfigCommand())
+				.build();
+		commands.put(Arrays.asList("reload"), reloadConfig);
+		
+		CommandSpec setInspectTool = CommandSpec.builder()
+				.description(Text.of())
+				.permission("landprotect.settool")
+				.executor(new SetClaimInspectToolCommand())
+				.arguments(GenericArguments.string(Text.of("item-id")))
+				.build();
+		commands.put(Arrays.asList("setinspecttool", "sit"), setInspectTool);
+		
+		CommandSpec setBoundaryBlock = CommandSpec.builder()
+				.description(Text.of())
+				.permission("landprotect.setboundaryblock")
+				.executor(new SetBoundaryBlockCommand())
+				.arguments(GenericArguments.string(Text.of("block-id")))
+				.build();
+		commands.put(Arrays.asList("setboundaryblock", "sbb"), setBoundaryBlock);
+		
 		return commands;
 		
 	}

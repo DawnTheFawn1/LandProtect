@@ -4,6 +4,8 @@ import com.initianovamc.rysingdragon.landprotect.LandProtect;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.item.ItemTypes;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,6 +59,8 @@ public class GeneralConfig implements Configuration{
 	public void setDefaults() {
 		List<String> interactableBlocks = new ArrayList<>();
 		configNode.getNode("Interactable").setValue(interactableBlocks).setComment("blocks that are interactable in protected land");
+		configNode.getNode("InspectTool").setValue(ItemTypes.WOODEN_AXE.getId()).setComment("Item the player needs to have in their hand to inspect claim boundaries");
+		configNode.getNode("BoundaryBlock").setValue(BlockTypes.COAL_BLOCK.getId()).setComment("Block that will appear as claim boundary when claiming land or using the inspect tool");
 	}
 
 	@Override
