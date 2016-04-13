@@ -135,14 +135,14 @@ public class CommandRegistry {
 		commands.put(Arrays.asList("removeinteractable"), removeInteractable);
 		
 		CommandSpec reloadConfig = CommandSpec.builder()
-				.description(Text.of())
+				.description(Text.of("reload config"))
 				.permission("landprotect.reloadconfig")
 				.executor(new ReloadConfigCommand())
 				.build();
 		commands.put(Arrays.asList("reload"), reloadConfig);
 		
 		CommandSpec setInspectTool = CommandSpec.builder()
-				.description(Text.of())
+				.description(Text.of("sets the inspector tool to toggle claims on/off"))
 				.permission("landprotect.settool")
 				.executor(new SetClaimInspectToolCommand())
 				.arguments(GenericArguments.string(Text.of("item-id")))
@@ -150,7 +150,7 @@ public class CommandRegistry {
 		commands.put(Arrays.asList("setinspecttool", "sit"), setInspectTool);
 		
 		CommandSpec setBoundaryBlock = CommandSpec.builder()
-				.description(Text.of())
+				.description(Text.of("sets the block to which players see claim boundaries as"))
 				.permission("landprotect.setboundaryblock")
 				.executor(new SetBoundaryBlockCommand())
 				.arguments(GenericArguments.string(Text.of("block-id")))
