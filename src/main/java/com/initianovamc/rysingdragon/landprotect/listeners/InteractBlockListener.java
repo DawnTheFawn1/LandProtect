@@ -90,7 +90,7 @@ public class InteractBlockListener {
 				
 				if (Utils.isClaimed(chunk, worldUUID)) {
 				
-					if (Utils.isProtected(chunk, worldUUID)) {
+					if (Utils.isAdminClaimed(chunk, worldUUID)) {
 						
 						if (player.hasPermission("landprotect.protect.bypass")) {
 							return;

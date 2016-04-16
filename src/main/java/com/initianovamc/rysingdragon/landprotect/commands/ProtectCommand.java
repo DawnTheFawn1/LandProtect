@@ -1,6 +1,8 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.AdminClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -11,7 +13,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ProtectCommand implements CommandExecutor{
@@ -24,17 +25,14 @@ public class ProtectCommand implements CommandExecutor{
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (!Utils.isClaimed(chunk, player.getWorld().getUniqueId())) {
-				List<Vector3i> protectedList = Utils.getProtectedClaims(worldUUID);
-				protectedList.add(chunk);
-				Utils.setProtectedClaims(worldUUID, protectedList);
+			if (!Utils.isAdminClaimed(chunk, worldUUID)) {
+				LandProtectDB.addAdminClaim(new AdminClaim(worldUUID, chunk));
 				player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have protected this chunk"));
-				
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));
 			}
 			return CommandResult.success();
-			
+
 		} else {
 			src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command"));
 			return CommandResult.empty();

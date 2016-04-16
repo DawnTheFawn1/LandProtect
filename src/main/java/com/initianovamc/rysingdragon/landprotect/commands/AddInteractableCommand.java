@@ -18,7 +18,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddInteractable implements CommandExecutor{
+public class AddInteractableCommand implements CommandExecutor{
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

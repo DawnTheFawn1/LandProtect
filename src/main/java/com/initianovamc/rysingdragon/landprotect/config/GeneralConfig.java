@@ -61,6 +61,13 @@ public class GeneralConfig implements Configuration{
 		configNode.getNode("Interactable").setValue(interactableBlocks).setComment("blocks that are interactable in protected land");
 		configNode.getNode("InspectTool").setValue(ItemTypes.WOODEN_AXE.getId()).setComment("Item the player needs to have in their hand to inspect claim boundaries");
 		configNode.getNode("BoundaryBlock").setValue(BlockTypes.COAL_BLOCK.getId()).setComment("Block that will appear as claim boundary when claiming land or using the inspect tool");
+		configNode.getNode("MySQL").setComment("Settings for using MySQL to save data");
+		configNode.getNode("MySQL", "enabled").setValue(false);
+		configNode.getNode("MySQL", "host").setValue("localhost");
+		configNode.getNode("MySQL", "port").setValue(3306);
+		configNode.getNode("MySQL", "database").setValue("LandProtect");
+		configNode.getNode("MySQL", "username").setValue("user");
+		configNode.getNode("MySQL", "password").setValue("pass");
 	}
 
 	@Override

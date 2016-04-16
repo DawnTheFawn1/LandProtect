@@ -1,7 +1,8 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.reflect.TypeToken;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.AdminClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -12,7 +13,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.List;
 import java.util.UUID;
 
 public class UnprotectCommand implements CommandExecutor{
@@ -25,25 +25,17 @@ public class UnprotectCommand implements CommandExecutor{
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (Utils.isProtected(chunk, worldUUID)) {
-				
-				List<Vector3i> protectedClaims = Utils.getProtectedClaims(worldUUID);
-				TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-				if (protectedClaims.contains(chunk)) {
-					protectedClaims.remove(chunk);
-					Utils.setProtectedClaims(worldUUID, protectedClaims);
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have unprotected this land"));
-				} 
-				
+			if (Utils.isAdminClaimed(chunk, worldUUID)) {
+				LandProtectDB.removeAdminClaim(new AdminClaim(worldUUID, chunk));
+				player.sendMessage(Text.of("you have unprotected this land."));
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is not protected"));
 			}
+			return CommandResult.success();
 			
 		} else {
 			src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command"));
-		}
-		
-		return CommandResult.success();
+			return CommandResult.empty();
+		}	
 	}
-
 }

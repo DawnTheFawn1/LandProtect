@@ -1,10 +1,10 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.initianovamc.rysingdragon.landprotect.LandProtect;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import com.initianovamc.rysingdragon.landprotect.utils.ClaimBoundary;
+import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -16,11 +16,10 @@ import org.spongepowered.api.service.permission.option.OptionSubject;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class ClaimCommand implements CommandExecutor{
 
@@ -44,21 +43,23 @@ public class ClaimCommand implements CommandExecutor{
 					if (subject instanceof OptionSubject) {
 						OptionSubject optSubject = (OptionSubject)subject;
 						int claimLimit = Integer.parseInt(optSubject.getOption("claimlimit").orElse("0"));
-						int claims = Utils.getOwnedClaims(player.getUniqueId(), worldUUID).size();
-						
-						if (claimLimit != 0) {
-							if (claims >= claimLimit) {
-								player.sendMessage(Text.of(TextColors.RED, "You have reached the max claim limit"));
-								return CommandResult.success();
-							} 
+						int claimAmount;
+						try {
+							claimAmount = LandProtectDB.getPlayerClaimAmount(player.getUniqueId());
+							if (claimLimit != 0) {
+								if (claimAmount >= claimLimit) {
+									player.sendMessage(Text.of(TextColors.RED, "You have reached the max claim limit"));
+									return CommandResult.success();
+								} 
+							}
+						} catch (SQLException e) {
+							e.printStackTrace();
 						}
 						 
 					} 
 				} 
 				
-				List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId(), worldUUID);
-				claims.add(chunk);
-				Utils.setClaims(player.getUniqueId(), worldUUID, claims, "owned");				
+				LandProtectDB.addPlayerClaim(new PlayerClaim(worldUUID, chunk, player.getUniqueId()));
 				player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk"));
 				
 				ClaimBoundary boundary = new ClaimBoundary(player, chunk);

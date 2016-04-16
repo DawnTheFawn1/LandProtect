@@ -5,6 +5,7 @@ import com.google.common.reflect.TypeToken;
 import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -24,13 +25,11 @@ public final class Utils {
 
 	public static boolean isClaimed(Vector3i chunk, UUID worldUUID) {
 		
-		for (Vector3i claim : getProtectedClaims(worldUUID)) {
-			if (claim.equals(chunk)) {
-				return true;
-			}
+		if (isAdminClaimed(chunk, worldUUID) || isPlayerClaimed(chunk, worldUUID)) {
+			return true;
 		}
 		
-		try {
+		/*try {
 			for (String uuid : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
 				if (ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", uuid, "Worlds", worldUUID.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)).contains(chunk)) {
 					return true;
@@ -38,22 +37,31 @@ public final class Utils {
 			}
 		} catch (ObjectMappingException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		return false;
 		
 	}
 
-	public static boolean isProtected(Vector3i chunk, UUID worldUUID) {
+	public static boolean isAdminClaimed(Vector3i chunk, UUID worldUUID) {
+		ClaimKey key = new ClaimKey(worldUUID, chunk);
+		Map<ClaimKey, AdminClaim> claims = LandProtectDB.adminclaims;
+		if (claims.containsKey(key)) {
+			return true;
+		}
 		
-		for (Vector3i claim : getProtectedClaims(worldUUID)) {
-			if (claim.equals(chunk)) {
-				return true;
-			}
+		return false;	
+	}
+	
+	public static boolean isPlayerClaimed(Vector3i chunk, UUID worldUUID) {
+		ClaimKey key = new ClaimKey(worldUUID, chunk);
+		Map<ClaimKey, PlayerClaim> claims = LandProtectDB.playerclaims;
+		
+		if (claims.containsKey(key)) {
+			return true;
 		}
 		
 		return false;
-		
 	}
 	
 	public static boolean isFriend(UUID playerUUID, UUID friendUUID) {
@@ -93,39 +101,16 @@ public final class Utils {
 		return false;
 	}
 	
-	public static Optional<UUID> getClaimOwner(Vector3i chunk, UUID worldUUID) {
-		
-		if (isClaimed(chunk, worldUUID)) {
-			
-			try {
-				for (String uuid : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
-					if (ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", uuid, "Worlds", worldUUID.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)).contains(chunk)) {
-						return Optional.of(UUID.fromString(uuid));
-					}
-				}
-				
-			} catch (ObjectMappingException e) {
-				e.printStackTrace();
-			}
+	public static Optional<UUID> getClaimOwner(Vector3i chunk, UUID worldUUID) {	
+		if (isPlayerClaimed(chunk, worldUUID)) {
+			ClaimKey key = new ClaimKey(worldUUID, chunk);
+			return Optional.of(LandProtectDB.playerclaims.get(key).getPlayerUUID());
 		}
 		
 		return Optional.empty();
 	}
 	
-	public static List<Vector3i> getProtectedClaims(UUID worldUUID) {
-		
-		List<Vector3i> protectedClaims = new ArrayList<>();
-		try {
-			protectedClaims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", worldUUID.toString(), "Protected").getList(TypeToken.of(Vector3i.class), new ArrayList<>()));
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
-		}
-		
-		return protectedClaims;
-	}
-	
 	public static List<Vector3i> getOwnedClaims(UUID playerUUID, UUID worldUUID) {
-		
 		try {
 			List<Vector3i> claims = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID.toString(), "Worlds", worldUUID.toString(), "OwnedClaims").getList(TypeToken.of(Vector3i.class)));
 			return claims;
@@ -191,18 +176,6 @@ public final class Utils {
 			}
 			break;
 		
-		}
-		
-	}
-
-	public static void setProtectedClaims(UUID worldUUID, List<Vector3i> claimsList) {
-		
-		TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-		try {
-			ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", worldUUID.toString(), "Protected").setValue(token, claimsList);
-			ClaimConfig.getClaimConfig().save();
-		} catch (ObjectMappingException e) {
-			e.printStackTrace();
 		}
 		
 	}

@@ -40,10 +40,10 @@ public class PlayerMoveListener {
 				
 			} else if (Utils.isClaimed(oldChunk, worldUUID) && Utils.isClaimed(newChunk, worldUUID)) {
 				
-				if (Utils.isProtected(oldChunk, worldUUID) && Utils.isProtected(newChunk, worldUUID)) {
+				if (Utils.isAdminClaimed(oldChunk, worldUUID) && Utils.isAdminClaimed(newChunk, worldUUID)) {
 					return;
 					
-				} else if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent() && Utils.isProtected(newChunk, worldUUID)) {
+				} else if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent() && Utils.isAdminClaimed(newChunk, worldUUID)) {
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "protected ", TextColors.DARK_AQUA, "land"));
 					
 				} else if (Utils.getClaimOwner(newChunk, worldUUID).isPresent()) {
