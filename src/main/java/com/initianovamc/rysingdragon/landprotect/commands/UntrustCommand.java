@@ -2,6 +2,9 @@ package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.reflect.TypeToken;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.ClaimKey;
+import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -23,38 +26,25 @@ public class UntrustCommand implements CommandExecutor{
 		
 		if (src instanceof Player) {
 			Player player = (Player)src;
-			User trusted = (Player)args.getOne("player").get();
+			User trusted = (User)args.getOne("player").get();
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
 			if (Utils.isClaimed(chunk, worldUUID)) {
-				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
-					if (player.getUniqueId().equals(Utils.getClaimOwner(chunk, worldUUID).get())) {
-						
-						TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-						List<Vector3i> trustedClaims = Utils.getTrustedClaims(trusted.getUniqueId(), worldUUID);
-
-						if (trustedClaims.contains(chunk)) {
-							trustedClaims.remove(chunk);
-							Utils.setClaims(trusted.getUniqueId(), worldUUID, trustedClaims, "trusted");
-							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have removed ", TextColors.GOLD, trusted.getName(), TextColors.DARK_AQUA, " from access to this claim"));
-						} else {
-							player.sendMessage(Text.of(TextColors.GOLD, trusted.getName(), TextColors.DARK_AQUA, " does not have access to this claim"));
-						}
-					} else {
-						player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
-					}
-					
-				} else {
-					player.sendMessage(Text.of(TextColors.RED, "You may not give trust to a protected claim"));
-				}	
-				
-			} else {
-				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
-			}
+				if (Utils.getClaimOwner(chunk, worldUUID).isPresent() && Utils.getClaimOwner(chunk, worldUUID).get().equals(player.getUniqueId())) {
+					PlayerClaim claim = new PlayerClaim(worldUUID, chunk, player.getUniqueId());
+					ClaimKey key = new ClaimKey(worldUUID, chunk);
+					if (LandProtectDB.trustedPlayers.containsKey(key) && LandProtectDB.trustedPlayers.get(key).contains(trusted.getUniqueId())) {
+						LandProtectDB.removeTrust(trusted.getUniqueId(), claim);
+						player.sendMessage(Text.of(TextColors.DARK_AQUA, "Successfully revoked ", TextColors.GOLD, trusted.getName(), TextColors.DARK_AQUA, " access to this claim"));
+					} else player.sendMessage(Text.of(TextColors.GOLD, trusted.getName(), TextColors.DARK_AQUA, " does not have access to this claim"));
+				} else player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
+			} else player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
+			
+		} else {
+			src.sendMessage(Text.of("You must be a player to use this command"));
+			return CommandResult.empty();
 		}
-		
 		return CommandResult.success();
 	}
-
 }

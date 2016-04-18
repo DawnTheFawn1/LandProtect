@@ -1,6 +1,7 @@
 package com.initianovamc.rysingdragon.landprotect.listeners;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.initianovamc.rysingdragon.landprotect.utils.ClaimKey;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -18,12 +19,27 @@ public class ChangeBlockListener {
 		UUID playerUUID;
 		
 		if (Utils.isClaimed(chunk, worldUUID)) {
+			ClaimKey key = new ClaimKey(worldUUID, chunk);
 			
 			if (event.getCause().first(User.class).isPresent()) {
 				User user = event.getCause().first(User.class).get();
 				playerUUID = user.getUniqueId();
 				
 				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+					
+					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+					if (owner.equals(playerUUID)) {
+						return;
+					}
+					
+					if (Utils.isFriend(playerUUID, owner)) {
+						return;
+					}
+					
+					if (Utils.isTrustedToClaim(chunk, playerUUID, worldUUID)) {
+						return;
+					}
+					
 					if (user.hasPermission("landprotect.claim.bypass")) {
 						return;
 					}
@@ -51,23 +67,6 @@ public class ChangeBlockListener {
 				event.setCancelled(true);
 				return;
 			}
-			
-			if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
-				UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
-				if (owner.equals(playerUUID)) {
-					return;
-				}
-				
-				if (Utils.isFriend(playerUUID, owner)) {
-					return;
-				}
-				
-				if (Utils.isTrustedToClaim(chunk, playerUUID, worldUUID)) {
-					return;
-				}
-				
-			}
-			
 			
 			event.setCancelled(true);
 		}
@@ -80,12 +79,27 @@ public class ChangeBlockListener {
 		UUID playerUUID;
 		
 		if (Utils.isClaimed(chunk, worldUUID)) {
+			ClaimKey key = new ClaimKey(worldUUID, chunk);
 			
 			if (event.getCause().first(User.class).isPresent()) {
 				User user = event.getCause().first(User.class).get();
 				playerUUID = user.getUniqueId();
 				
 				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+					
+					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+					if (owner.equals(playerUUID)) {
+						return;
+					}
+					
+					if (Utils.isFriend(playerUUID, owner)) {
+						return;
+					}
+					
+					if (Utils.isTrustedToClaim(chunk, playerUUID, worldUUID)) {
+						return;
+					}
+					
 					if (user.hasPermission("landprotect.claim.bypass")) {
 						return;
 					}
@@ -112,22 +126,6 @@ public class ChangeBlockListener {
 			} else {
 				event.setCancelled(true);
 				return;
-			}
-			
-			if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
-				UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
-				if (owner.equals(playerUUID)) {
-					return;
-				}
-				
-				if (Utils.isFriend(playerUUID, owner)) {
-					return;
-				}
-				
-				if (Utils.isTrustedToClaim(chunk, playerUUID, worldUUID)) {
-					return;
-				}
-				
 			}
 			
 			event.setCancelled(true);

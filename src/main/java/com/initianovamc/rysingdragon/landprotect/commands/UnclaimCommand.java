@@ -1,10 +1,9 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.reflect.TypeToken;
-import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -14,7 +13,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.List;
 import java.util.UUID;
 
 public class UnclaimCommand implements CommandExecutor{
@@ -27,39 +25,20 @@ public class UnclaimCommand implements CommandExecutor{
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (Utils.isClaimed(chunk, worldUUID)) {
-				
-				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {	
-					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+			if (Utils.isPlayerClaimed(chunk, worldUUID)) {					
+				UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+				if (player.getUniqueId().equals(owner)) {
+					PlayerClaim claim = new PlayerClaim(worldUUID, chunk, player.getUniqueId());
+					LandProtectDB.removePlayerClaim(claim);
+					LandProtectDB.removeAllTrusts(claim);
+					player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have unclaimed this land"));		
 					
-					if (player.getUniqueId().equals(owner)) {
-						List<Vector3i> claims = Utils.getOwnedClaims(player.getUniqueId(), worldUUID);
-						TypeToken<List<Vector3i>> token = new TypeToken<List<Vector3i>>() {};
-						if (claims.contains(chunk)) {
-							claims.remove(chunk);
-							Utils.setClaims(player.getUniqueId(), worldUUID, claims, "owned");
-							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have unclaimed this land"));
-						} else {
-							player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
-						}
-						if (Utils.getTrustedPlayers(chunk, worldUUID).isPresent()) {
-							List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk, worldUUID).get();
-							for (UUID trusted : trustedPlayers) {
-								
-								List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted, worldUUID);
-								trustedClaims.remove(chunk);
-								Utils.setClaims(trusted, worldUUID, trustedClaims, "trusted");
-							}
-						}		
-						
-					} else {
-						player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
-					}
-					
+				} else {
+					player.sendMessage(Text.of(TextColors.RED, "You do not own this claim"));
 				}
 				
 			} else {
-				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "You do not own this land"));
 			}
 			
 		} else {
@@ -68,5 +47,4 @@ public class UnclaimCommand implements CommandExecutor{
 		
 		return CommandResult.success();
 	}
-
 }

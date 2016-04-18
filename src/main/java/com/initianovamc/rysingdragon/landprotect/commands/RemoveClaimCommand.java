@@ -1,10 +1,9 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.reflect.TypeToken;
-import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
+import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -14,7 +13,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class RemoveClaimCommand implements CommandExecutor{
@@ -27,34 +26,21 @@ public class RemoveClaimCommand implements CommandExecutor{
 			Vector3i chunk = player.getLocation().getChunkPosition();
 			UUID worldUUID = player.getWorld().getUniqueId();
 			
-			if (Utils.isClaimed(chunk, worldUUID)) {
-				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
-					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
-					List<Vector3i> claims = Utils.getOwnedClaims(owner, worldUUID);	
-					claims.remove(chunk);
-					Utils.setClaims(owner, worldUUID, claims, "owned");
-					
-					if (Utils.getTrustedPlayers(chunk, worldUUID).isPresent()) {
-						
-						List<UUID> trustedPlayers = Utils.getTrustedPlayers(chunk, worldUUID).get();	
-						for (UUID trusted : trustedPlayers) {
-							
-							List<Vector3i> trustedClaims = Utils.getOwnedClaims(trusted, worldUUID);
-							trustedClaims.remove(chunk);
-							Utils.setClaims(trusted, worldUUID, trustedClaims, "trusted");
-						}
-						
-					}
-					
-				} else {
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "This land is not claimed by a player, use /lp unprotect to remove protected land"));
-				}
+			if (Utils.isPlayerClaimed(chunk, worldUUID)) {
+				Optional<UUID> optPlayer = Utils.getClaimOwner(chunk, worldUUID);
+				optPlayer.ifPresent(playerUUID -> {
+					PlayerClaim claim = new PlayerClaim(worldUUID, chunk, playerUUID);
+					LandProtectDB.removePlayerClaim(claim);
+					LandProtectDB.removeAllTrusts(claim);
+				});
+				
+				player.sendMessage(Text.of("Success!"));
+
 			} else {
-				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed"));
+				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed by a player"));
 			}
 		}
 		
 		return CommandResult.success();
 	}
-
 }

@@ -7,12 +7,10 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.BookView;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HelpCommand implements CommandExecutor{

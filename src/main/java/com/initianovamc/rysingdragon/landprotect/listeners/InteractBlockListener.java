@@ -101,6 +101,7 @@ public class InteractBlockListener {
 							if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
 								event.setCancelled(true);
 								player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
+								return;
 							} else {
 								return;
 							}

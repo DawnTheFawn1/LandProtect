@@ -1,8 +1,6 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
-import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
-import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -13,9 +11,7 @@ public class ReloadConfigCommand implements CommandExecutor{
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		ClaimConfig.getClaimConfig().load();
 		GeneralConfig.getConfig().load();
-		PlayerConfig.getPlayerConfig().load();
 		return CommandResult.success();
 	}
 

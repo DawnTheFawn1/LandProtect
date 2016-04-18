@@ -16,7 +16,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,6 +30,8 @@ public class LandProtectDB {
 	private static DataSource dataSource;
 	public static Map<ClaimKey, PlayerClaim> playerclaims = new HashMap<>();
 	public static Map<ClaimKey, AdminClaim> adminclaims = new HashMap<>();
+	public static Map<ClaimKey, List<UUID>> trustedPlayers = new HashMap<>();
+	public static Map<UUID, List<UUID>> friendList = new HashMap<>();
 	
 	public static DataSource getDataSource(String jdbcUrl) throws SQLException {
 		return sql.getDataSource(jdbcUrl);
@@ -60,23 +64,91 @@ public class LandProtectDB {
 		
 		execute("CREATE TABLE IF NOT EXISTS adminclaims (worldUUID TEXT, chunkX INT, chunkZ INT)");
 		execute("CREATE TABLE IF NOT EXISTS playerclaims (playerUUID TEXT, worldUUID TEXT, chunkX INT, chunkZ INT)");
-		execute("CREATE TABLE IF NOT EXISTS playerdata (playerUUID TEXT, frienduuid TEXT)");
+		execute("CREATE TABLE IF NOT EXISTS friends (playerUUID TEXT, friendUUID TEXT)");
+		execute("CREATE TABLE IF NOT EXISTS trustedplayers (playerUUID TEXT, worldUUID TEXT, chunkX INT, chunkZ INT)");
 	}
 	
-	public static void readClaims() throws SQLException {
+	public static void read() throws SQLException {
 		Connection conn = dataSource.getConnection();
 		Statement statement = conn.createStatement();
-		ResultSet rs = statement.executeQuery("SELECT * FROM adminclaims");
-			
-		while (rs.next()) {
-			UUID worldUUID = UUID.fromString(rs.getString("worldUUID"));
-			Vector3i chunk = new Vector3i(rs.getInt("chunkX"), 0, rs.getInt("chunkZ"));
-			AdminClaim adminclaim = new AdminClaim(worldUUID, chunk);
-			ClaimKey key = new ClaimKey(worldUUID, chunk);
-			adminclaims.put(key, adminclaim);
+		ResultSet rs = null;
+		try {
+			rs = statement.executeQuery("SELECT * FROM adminclaims");
+				
+			while (rs.next()) {
+				UUID worldUUID = UUID.fromString(rs.getString("worldUUID"));
+				Vector3i chunk = new Vector3i(rs.getInt("chunkX"), 0, rs.getInt("chunkZ"));
+				AdminClaim adminclaim = new AdminClaim(worldUUID, chunk);
+				ClaimKey key = new ClaimKey(worldUUID, chunk);
+				adminclaims.put(key, adminclaim);
+			}
+				
+		} finally {
+			if (rs != null) rs.close();
 		}
+		
+		try {
+			rs = statement.executeQuery("SELECT * FROM playerclaims");
+				
+			while (rs.next()) {
+				UUID playerUUID = UUID.fromString(rs.getString("playerUUID"));
+				UUID worldUUID = UUID.fromString(rs.getString("worldUUID"));
+				Vector3i chunk = new Vector3i(rs.getInt("chunkX"), 0, rs.getInt("chunkZ"));
+				PlayerClaim adminclaim = new PlayerClaim(worldUUID, chunk, playerUUID);
+				ClaimKey key = new ClaimKey(worldUUID, chunk);
+				playerclaims.put(key, adminclaim);
+			}
+				
+		} finally {
+			if (rs != null) rs.close();
+		}
+		
+		try {
+			rs = statement.executeQuery("SELECT * FROM friends");
 			
-		rs.close();
+			while (rs.next()) {
+				UUID playerUUID = UUID.fromString(rs.getString("playerUUID"));
+				UUID friendUUID = UUID.fromString("friendUUID");
+				List<UUID> list = new ArrayList<>();
+				if (friendList.containsKey(playerUUID)) {
+					list = friendList.get(playerUUID);
+				}
+				list.add(friendUUID);
+				friendList.put(playerUUID, list);
+			}
+		} finally {
+			if (rs != null) rs.close();
+		}
+		
+		try {
+			rs = statement.executeQuery("SELECT * FROM trustedplayers");
+			
+			while (rs.next()) {
+				UUID worldUUID = UUID.fromString(rs.getString("worldUUID"));
+				Vector3i chunk = new Vector3i(rs.getInt("chunkX"), 0, rs.getInt("chunkZ"));
+				ClaimKey key = new ClaimKey(worldUUID, chunk);
+				UUID trustedPlayer = UUID.fromString(rs.getString("playerUUID"));
+				List<UUID> list = new ArrayList<>();
+				if (trustedPlayers.containsKey(key)) {
+					list = trustedPlayers.get(key);
+				}
+				list.add(trustedPlayer);
+				trustedPlayers.put(key, list);
+			}
+			 
+		} finally {
+			if (rs != null) rs.close();
+			statement.close();
+			conn.close();
+		}
+	}
+	
+	public static void execute(String execution) throws SQLException {
+		Connection conn = dataSource.getConnection();
+		Statement statement = conn.createStatement();
+		
+		statement.execute(execution);
+		
 		statement.close();
 		conn.close();
 	}
@@ -143,24 +215,70 @@ public class LandProtectDB {
 		adminclaims.remove(key);
 	}
 	
-	public static void addPlayer(UUID playerUUID) throws SQLException {
-		
-		Connection conn = dataSource.getConnection();
-		Statement statement = conn.createStatement();
-		
-		statement.execute("INSERT INTO playerdata (playerUUID) SELECT '" + playerUUID + "' WHERE NOT EXISTS (SELECT 1 FROM playerdata WHERE playerUUID = '" + playerUUID + "');");
-		statement.close();
-		conn.close();
+	public static void addTrust(UUID playerUUID, PlayerClaim claim) {		
+		String execution = "INSERT INTO trustedplayers (playerUUID, worldUUID, chunkX, chunkZ) VALUES ('" + playerUUID.toString() + "', '" + claim.getWorldUUID().toString() + "', '" + claim.getChunk().getX() + "', '" + claim.getChunk().getZ() + "')";
+		try {
+			execute(execution);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		ClaimKey key = new ClaimKey(claim.getWorldUUID(), claim.getChunk());
+		List<UUID> list = new ArrayList<>();
+		if (trustedPlayers.containsKey(key)) {
+			list = trustedPlayers.get(key);
+		}
+		list.add(playerUUID);
+		trustedPlayers.put(key, list);
 	}
 	
-	public static void execute(String execution) throws SQLException {
-		Connection conn = dataSource.getConnection();
-		Statement statement = conn.createStatement();
-		
-		statement.execute(execution);
-		
-		statement.close();
-		conn.close();
+	public static void removeTrust(UUID playerUUID, PlayerClaim claim) {
+		String execution = "DELETE FROM trustedplayers WHERE playerUUID = '" + playerUUID.toString() + "' AND worldUUID = '" + claim.getWorldUUID().toString() + "' AND chunkX = '" + claim.getChunk().getX() + "' AND chunkZ = '" + claim.getChunk().getZ() + "'";
+		try {
+			execute(execution);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		ClaimKey key = new ClaimKey(claim.getWorldUUID(), claim.getChunk());
+		List<UUID> list = trustedPlayers.get(key);
+		list.remove(playerUUID);
+		trustedPlayers.replace(key, list);
 	}
 	
+	public static void removeAllTrusts(PlayerClaim claim) {
+		String execution = "DELETE FROM trustedplayers WHERE worldUUID = '" + claim.getWorldUUID().toString() + "' AND chunkX = '" + claim.getChunk().getX() + "' AND chunkZ = '" + claim.getChunk().getZ() + "'";
+		try {
+			execute(execution);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		ClaimKey key = new ClaimKey(claim.getWorldUUID(), claim.getChunk());
+		if (trustedPlayers.containsKey(key)) trustedPlayers.remove(key);
+	}
+		
+	public static void addFriend(UUID playerUUID, UUID friendUUID) {
+		String execution = "INSERT INTO friends (playerUUID, friendUUID) VALUES ('" + playerUUID + "', '" + friendUUID + "')";
+		try {
+			execute(execution);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		List<UUID> list = new ArrayList<>();
+		if (friendList.containsKey(playerUUID)) {
+			list = friendList.get(playerUUID);
+		}
+		list.add(friendUUID);
+		friendList.replace(playerUUID, list);
+	}
+	
+	public static void removeFriend(UUID playerUUID, UUID friendUUID) {
+		String execution = "DELETE FROM friends WHERE playerUUID = '" + playerUUID + "' AND friendUUID = '" + friendUUID + "'";
+		try {
+			execute(execution);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		List<UUID> list = friendList.get(playerUUID);
+		list.remove(friendUUID);
+		friendList.replace(playerUUID, list);
+	}
 }

@@ -1,16 +1,12 @@
 package com.initianovamc.rysingdragon.landprotect;
 
-import com.flowpowered.math.vector.Vector3i;
 import com.google.inject.Inject;
 import com.initianovamc.rysingdragon.landprotect.commands.CommandRegistry;
-import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
-import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import com.initianovamc.rysingdragon.landprotect.listeners.ChangeBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.InteractBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.LoadWorldListener;
-import com.initianovamc.rysingdragon.landprotect.listeners.PlayerJoinListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.PlayerMoveListener;
 import me.flibio.updatifier.Updatifier;
 import org.slf4j.Logger;
@@ -29,7 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.UUID;
 
 @Updatifier(repoName = "LandProtect", repoOwner = "RysingDragon", version = LandProtect.PLUGIN_VERSION)
 @Plugin(name = LandProtect.PLUGIN_NAME, id = LandProtect.PLUGIN_ID, version = LandProtect.PLUGIN_VERSION, description = LandProtect.PLUGIN_DESCRIPTION, authors = LandProtect.PLUGIN_AUTHOR, dependencies = @Dependency(id = "Updatifier", optional = true))
@@ -65,12 +60,10 @@ public class LandProtect {
 			}
 		}
 		
-		ClaimConfig.getClaimConfig().setup();
-		PlayerConfig.getPlayerConfig().setup();
 		GeneralConfig.getConfig().setup();
 		try {
 			LandProtectDB.setup();
-			LandProtectDB.readClaims();
+			LandProtectDB.read();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -82,7 +75,6 @@ public class LandProtect {
 		CommandRegistry.registerCommands();
 		Sponge.getGame().getEventManager().registerListeners(this, new ChangeBlockListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new InteractBlockListener());
-		Sponge.getGame().getEventManager().registerListeners(this, new PlayerJoinListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new PlayerMoveListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new LoadWorldListener());
 	}
