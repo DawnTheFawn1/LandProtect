@@ -2,12 +2,15 @@ package com.initianovamc.rysingdragon.landprotect;
 
 import com.google.inject.Inject;
 import com.initianovamc.rysingdragon.landprotect.commands.CommandRegistry;
+import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
+import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import com.initianovamc.rysingdragon.landprotect.listeners.ChangeBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.InteractBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.LoadWorldListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.PlayerMoveListener;
+import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import me.flibio.updatifier.Updatifier;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -59,14 +62,27 @@ public class LandProtect {
 				e.printStackTrace();
 			}
 		}
-		
 		GeneralConfig.getConfig().setup();
-		try {
-			LandProtectDB.setup();
-			LandProtectDB.read();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		
+		if (Utils.legacyTransferEnabled()) {
+			try {
+				PlayerConfig.getPlayerConfig().setup();
+				ClaimConfig.getClaimConfig().setup();
+				LandProtectDB.setup();
+				Utils.transferLegacyData();
+				LandProtectDB.read();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				LandProtectDB.setup();
+				LandProtectDB.read();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+		
 	}	
 	
 	@Listener

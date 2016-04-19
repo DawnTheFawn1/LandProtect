@@ -108,7 +108,7 @@ public class LandProtectDB {
 			
 			while (rs.next()) {
 				UUID playerUUID = UUID.fromString(rs.getString("playerUUID"));
-				UUID friendUUID = UUID.fromString("friendUUID");
+				UUID friendUUID = UUID.fromString(rs.getString("friendUUID"));
 				List<UUID> list = new ArrayList<>();
 				if (friendList.containsKey(playerUUID)) {
 					list = friendList.get(playerUUID);
@@ -215,14 +215,14 @@ public class LandProtectDB {
 		adminclaims.remove(key);
 	}
 	
-	public static void addTrust(UUID playerUUID, PlayerClaim claim) {		
-		String execution = "INSERT INTO trustedplayers (playerUUID, worldUUID, chunkX, chunkZ) VALUES ('" + playerUUID.toString() + "', '" + claim.getWorldUUID().toString() + "', '" + claim.getChunk().getX() + "', '" + claim.getChunk().getZ() + "')";
+	public static void addTrust(UUID playerUUID, UUID worldUUID, Vector3i chunk) {		
+		String execution = "INSERT INTO trustedplayers (playerUUID, worldUUID, chunkX, chunkZ) VALUES ('" + playerUUID.toString() + "', '" + worldUUID.toString() + "', '" + chunk.getX() + "', '" + chunk.getZ() + "')";
 		try {
 			execute(execution);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		ClaimKey key = new ClaimKey(claim.getWorldUUID(), claim.getChunk());
+		ClaimKey key = new ClaimKey(worldUUID, chunk);
 		List<UUID> list = new ArrayList<>();
 		if (trustedPlayers.containsKey(key)) {
 			list = trustedPlayers.get(key);
@@ -231,14 +231,14 @@ public class LandProtectDB {
 		trustedPlayers.put(key, list);
 	}
 	
-	public static void removeTrust(UUID playerUUID, PlayerClaim claim) {
-		String execution = "DELETE FROM trustedplayers WHERE playerUUID = '" + playerUUID.toString() + "' AND worldUUID = '" + claim.getWorldUUID().toString() + "' AND chunkX = '" + claim.getChunk().getX() + "' AND chunkZ = '" + claim.getChunk().getZ() + "'";
+	public static void removeTrust(UUID playerUUID, UUID worldUUID, Vector3i chunk) {
+		String execution = "DELETE FROM trustedplayers WHERE playerUUID = '" + playerUUID.toString() + "' AND worldUUID = '" + worldUUID.toString() + "' AND chunkX = '" + chunk.getX() + "' AND chunkZ = '" + chunk.getZ() + "'";
 		try {
 			execute(execution);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		ClaimKey key = new ClaimKey(claim.getWorldUUID(), claim.getChunk());
+		ClaimKey key = new ClaimKey(worldUUID, chunk);
 		List<UUID> list = trustedPlayers.get(key);
 		list.remove(playerUUID);
 		trustedPlayers.replace(key, list);

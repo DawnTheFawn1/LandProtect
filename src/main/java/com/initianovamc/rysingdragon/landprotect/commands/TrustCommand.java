@@ -43,7 +43,7 @@ public class TrustCommand implements CommandExecutor{
 						if (!list.contains(trustedPlayer.getUniqueId())) {
 							list.add(trustedPlayer.getUniqueId());
 							LandProtectDB.trustedPlayers.replace(key, list);
-							LandProtectDB.addTrust(trustedPlayer.getUniqueId(), new PlayerClaim(worldUUID, chunk, player.getUniqueId()));
+							LandProtectDB.addTrust(trustedPlayer.getUniqueId(), worldUUID, chunk);
 							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have granted ", TextColors.GOLD, trustedPlayer.getName(), TextColors.DARK_AQUA, " access to this claim"));
 						} else player.sendMessage(Text.of(TextColors.GOLD, trustedPlayer.getName(), TextColors.DARK_AQUA, " already has access to this claim"));
 					} else player.sendMessage(Text.of(TextColors.RED, "You are not the owner of this claim"));

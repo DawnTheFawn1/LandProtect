@@ -32,6 +32,7 @@ public class GeneralConfig implements Configuration{
 			}
 		} else {
 			load();
+			checkValues();
 		}
 	}
 
@@ -57,8 +58,7 @@ public class GeneralConfig implements Configuration{
 
 	@Override
 	public void setDefaults() {
-		List<String> interactableBlocks = new ArrayList<>();
-		configNode.getNode("Interactable").setValue(interactableBlocks).setComment("blocks that are interactable in protected land");
+		configNode.getNode("Interactable").setValue(new ArrayList<>()).setComment("blocks that are interactable in protected land");
 		configNode.getNode("InspectTool").setValue(ItemTypes.WOODEN_AXE.getId()).setComment("Item the player needs to have in their hand to inspect claim boundaries");
 		configNode.getNode("BoundaryBlock").setValue(BlockTypes.COAL_BLOCK.getId()).setComment("Block that will appear as claim boundary when claiming land or using the inspect tool");
 		configNode.getNode("MySQL").setComment("Settings for using MySQL to save data");
@@ -68,6 +68,7 @@ public class GeneralConfig implements Configuration{
 		configNode.getNode("MySQL", "database").setValue("LandProtect");
 		configNode.getNode("MySQL", "username").setValue("user");
 		configNode.getNode("MySQL", "password").setValue("pass");
+		configNode.getNode("DataTransfer").setValue(false).setComment("Transfers claims and friends to the newer, more optimized system. Claims and friends will no longer be saved in configs even if this is false");
 	}
 
 	@Override
@@ -77,6 +78,21 @@ public class GeneralConfig implements Configuration{
 
 	public static GeneralConfig getConfig() {
 		return generalConfig;
+	}
+
+	public void checkValues() {
+		if (configNode.getNode("Interactable").getValue() == null) configNode.getNode("Interactable").setValue(new ArrayList<>()).setComment("blocks that are interactable in protected land");
+		if (configNode.getNode("InspectTool").getValue() == null) configNode.getNode("InspectTool").setValue(ItemTypes.WOODEN_AXE.getId()).setComment("Item the player needs to have in their hand to inspect claim boundaries");
+		if (configNode.getNode("BoundaryBlock").getValue() == null) configNode.getNode("BoundaryBlock").setValue(BlockTypes.COAL_BLOCK.getId()).setComment("Block that will appear as claim boundary when claiming land or using the inspect tool");
+		if (configNode.getNode("MySQL").isVirtual()) configNode.getNode("MySQL").setComment("Settings for using MySQL to save data");
+		if (configNode.getNode("MySQL", "enabled").getValue() == null) configNode.getNode("MySQL", "enabled").setValue(false);
+		if (configNode.getNode("MySQL", "host").getValue() == null) configNode.getNode("MySQL", "host").setValue("localhost");
+		if (configNode.getNode("MySQL", "port").getValue() == null) configNode.getNode("MySQL", "port").setValue(3306);
+		if (configNode.getNode("MySQL", "database").getValue() == null) configNode.getNode("MySQL", "database").setValue("LandProtect");
+		if (configNode.getNode("MySQL", "username").getValue() == null) configNode.getNode("MySQL", "username").setValue("user");
+		if (configNode.getNode("MySQL", "password").getValue() == null) configNode.getNode("MySQL", "password").setValue("pass");	
+		if (configNode.getNode("DataTransfer").getValue() == null) configNode.getNode("DataTransfer").setValue(false).setComment("Transfers claims and friends to the newer, more optimized system. Claims and friends will no longer be saved in configs even if this is false");
+		save();
 	}
 	
 }

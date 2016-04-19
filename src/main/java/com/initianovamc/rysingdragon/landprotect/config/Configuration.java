@@ -4,14 +4,14 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
 public interface Configuration {
 
-	void setup();
+	public void setup();
 	
-	void save();
+	public void save();
 	
-	void load();
+	public void load();
 	
-	void setDefaults();
+	public void setDefaults();
 	
-	CommentedConfigurationNode getConfigNode();
+	public CommentedConfigurationNode getConfigNode();
 	
 }

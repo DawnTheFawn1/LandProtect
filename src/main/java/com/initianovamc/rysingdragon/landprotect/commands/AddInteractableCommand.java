@@ -37,6 +37,7 @@ public class AddInteractableCommand implements CommandExecutor{
 					List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
 					if (interactables.contains(id)) {
 						player.sendMessage(Text.of(TextColors.RED, "That block id is already added"));
+						return CommandResult.empty();
 					}
 					
 					interactables.add(id);

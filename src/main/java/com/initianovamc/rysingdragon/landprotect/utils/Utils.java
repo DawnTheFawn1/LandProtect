@@ -1,8 +1,13 @@
 package com.initianovamc.rysingdragon.landprotect.utils;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.reflect.TypeToken;
+import com.initianovamc.rysingdragon.landprotect.LandProtect;
+import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
+import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +101,99 @@ public final class Utils {
 		} else {
 			return "minecraft:wooden_axe";
 		}
+	}
+	
+	public static boolean legacyTransferEnabled() {
+		return GeneralConfig.getConfig().getConfigNode().getNode("DataTransfer").getBoolean();
+	}
+	
+	public static List<String> getFriendList(UUID playerUUID) {
+		
+		try {
+			List<String> friendList = PlayerConfig.getPlayerConfig().getConfigNode().getNode("friends", playerUUID.toString(), "friendlist").getList(TypeToken.of(String.class));
+			return friendList;
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<>();
+	}
+	
+	public static List<Vector3i> getTrustedClaims(UUID playerUUID, UUID worldUUID) {
+		
+		try {
+			List<Vector3i> trustedList = new ArrayList<>(ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID.toString(), "Worlds", worldUUID.toString(), "TrustedClaims").getList(TypeToken.of(Vector3i.class)));
+			return trustedList;
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<>();
+		
+	}
+	
+	private static void transferTrustedPlayers() {
+		try {
+			LandProtect.instance.getLogger().info("transferring trusts");
+			for (String playerUUID : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
+				List<Vector3i> claims = getTrustedClaims(UUID.fromString(playerUUID), UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121"));
+				for (Vector3i chunk : claims) {
+					LandProtectDB.addTrust(UUID.fromString(playerUUID), UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121"), chunk);
+				}
+			}
+			LandProtect.instance.getLogger().info("transferring trusts");
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void transferPlayerData() {
+		try {
+			LandProtect.instance.getLogger().info("transferring friends");
+			for (String playerUUID : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
+				for (String uuid : getFriendList(UUID.fromString(playerUUID))) {
+					LandProtectDB.addFriend(UUID.fromString(playerUUID), UUID.fromString(uuid));
+				}
+			}
+			LandProtect.instance.getLogger().info("done transferring friends");
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void transferAdminClaims() {
+		try {
+			LandProtect.instance.getLogger().info("transferring admin claims");
+			UUID worldUUID = UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121");
+			for (Vector3i chunk : ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", worldUUID.toString(), "Protected").getList(TypeToken.of(Vector3i.class))) {
+				AdminClaim claim = new AdminClaim(worldUUID, chunk);
+				LandProtectDB.addAdminClaim(claim);
+			}
+			LandProtect.instance.getLogger().info("done transferring admin claims");	
+		} catch(ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void transferPlayerClaims() {
+		try {
+			LandProtect.instance.getLogger().info("transferring player claims");
+			for (String playerUUID : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
+				List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID, "Worlds", "834f0d59-ac75-43d1-b91e-5a15353d1121" , "OwnedClaims").getList(TypeToken.of(Vector3i.class));
+				for (Vector3i chunk : claims) {
+					PlayerClaim claim = new PlayerClaim(UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121"), chunk, UUID.fromString(playerUUID));
+					LandProtectDB.addPlayerClaim(claim);
+				}
+			}
+			LandProtect.instance.getLogger().info("done transferring player claims");
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void transferLegacyData() {
+		transferPlayerData();
+		transferAdminClaims();
+		transferPlayerClaims();
 	}
 	
 }
