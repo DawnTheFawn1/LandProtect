@@ -8,6 +8,8 @@ import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,9 +137,12 @@ public final class Utils {
 		try {
 			LandProtect.instance.getLogger().info("transferring trusts");
 			for (String playerUUID : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
-				List<Vector3i> claims = getTrustedClaims(UUID.fromString(playerUUID), UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121"));
-				for (Vector3i chunk : claims) {
-					LandProtectDB.addTrust(UUID.fromString(playerUUID), UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121"), chunk);
+				
+				for (World world : Sponge.getServer().getWorlds()) {
+					List<Vector3i> claims = getTrustedClaims(UUID.fromString(playerUUID), world.getUniqueId());
+					for (Vector3i chunk : claims) {
+						LandProtectDB.addTrust(UUID.fromString(playerUUID), world.getUniqueId(), chunk);
+					}
 				}
 			}
 			LandProtect.instance.getLogger().info("transferring trusts");
@@ -163,10 +168,12 @@ public final class Utils {
 	private static void transferAdminClaims() {
 		try {
 			LandProtect.instance.getLogger().info("transferring admin claims");
-			UUID worldUUID = UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121");
-			for (Vector3i chunk : ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", worldUUID.toString(), "Protected").getList(TypeToken.of(Vector3i.class))) {
-				AdminClaim claim = new AdminClaim(worldUUID, chunk);
-				LandProtectDB.addAdminClaim(claim);
+			
+			for (World world : Sponge.getServer().getWorlds()) {
+				for (Vector3i chunk : ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", world.getUniqueId().toString(), "Protected").getList(TypeToken.of(Vector3i.class))) {
+					AdminClaim claim = new AdminClaim(world.getUniqueId(), chunk);
+					LandProtectDB.addAdminClaim(claim);
+				}
 			}
 			LandProtect.instance.getLogger().info("done transferring admin claims");	
 		} catch(ObjectMappingException e) {
@@ -178,10 +185,12 @@ public final class Utils {
 		try {
 			LandProtect.instance.getLogger().info("transferring player claims");
 			for (String playerUUID : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
-				List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID, "Worlds", "834f0d59-ac75-43d1-b91e-5a15353d1121" , "OwnedClaims").getList(TypeToken.of(Vector3i.class));
-				for (Vector3i chunk : claims) {
-					PlayerClaim claim = new PlayerClaim(UUID.fromString("834f0d59-ac75-43d1-b91e-5a15353d1121"), chunk, UUID.fromString(playerUUID));
-					LandProtectDB.addPlayerClaim(claim);
+				for (World world : Sponge.getServer().getWorlds()) {
+					List<Vector3i> claims = ClaimConfig.getClaimConfig().getConfigNode().getNode("PlayerClaims", playerUUID, "Worlds", world.getUniqueId().toString() , "OwnedClaims").getList(TypeToken.of(Vector3i.class));
+					for (Vector3i chunk : claims) {
+						PlayerClaim claim = new PlayerClaim(world.getUniqueId(), chunk, UUID.fromString(playerUUID));
+						LandProtectDB.addPlayerClaim(claim);
+					}
 				}
 			}
 			LandProtect.instance.getLogger().info("done transferring player claims");
