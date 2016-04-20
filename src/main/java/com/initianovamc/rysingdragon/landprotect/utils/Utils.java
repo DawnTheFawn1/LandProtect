@@ -137,7 +137,6 @@ public final class Utils {
 		try {
 			LandProtect.instance.getLogger().info("transferring trusts");
 			for (String playerUUID : PlayerConfig.getPlayerConfig().getConfigNode().getNode("registeredPlayers").getList(TypeToken.of(String.class))) {
-				
 				for (World world : Sponge.getServer().getWorlds()) {
 					List<Vector3i> claims = getTrustedClaims(UUID.fromString(playerUUID), world.getUniqueId());
 					for (Vector3i chunk : claims) {
@@ -168,7 +167,6 @@ public final class Utils {
 	private static void transferAdminClaims() {
 		try {
 			LandProtect.instance.getLogger().info("transferring admin claims");
-			
 			for (World world : Sponge.getServer().getWorlds()) {
 				for (Vector3i chunk : ClaimConfig.getClaimConfig().getConfigNode().getNode("ProtectedClaims", "Worlds", world.getUniqueId().toString(), "Protected").getList(TypeToken.of(Vector3i.class))) {
 					AdminClaim claim = new AdminClaim(world.getUniqueId(), chunk);
@@ -203,6 +201,7 @@ public final class Utils {
 		transferPlayerData();
 		transferAdminClaims();
 		transferPlayerClaims();
+		transferTrustedPlayers();
 	}
 	
 }

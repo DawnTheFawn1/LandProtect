@@ -72,6 +72,7 @@ public class LandProtect {
 				Utils.transferLegacyData();
 				LandProtectDB.read();
 				GeneralConfig.getConfig().getConfigNode().getNode("DataTransfer").setValue(false);
+				GeneralConfig.getConfig().save();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

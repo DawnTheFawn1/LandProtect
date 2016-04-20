@@ -182,7 +182,10 @@ public class LandProtectDB {
 		
 		String execution = "SELECT COUNT(*) AS amount FROM playerclaims WHERE playerUUID = '" + playerUUID.toString() + "' ";
 		ResultSet rs = statement.executeQuery(execution);
-		int amount = rs.getInt("amount");
+		int amount = 0;
+		if (rs.next()) {
+			amount = rs.getInt("amount");
+		}
 		
 		rs.close();
 		statement.close();
@@ -226,9 +229,12 @@ public class LandProtectDB {
 		List<UUID> list = new ArrayList<>();
 		if (trustedPlayers.containsKey(key)) {
 			list = trustedPlayers.get(key);
+			list.add(playerUUID);
+			trustedPlayers.replace(key, list);
+		} else {
+			list.add(playerUUID);
+			trustedPlayers.put(key, list);
 		}
-		list.add(playerUUID);
-		trustedPlayers.put(key, list);
 	}
 	
 	public static void removeTrust(UUID playerUUID, UUID worldUUID, Vector3i chunk) {
@@ -265,9 +271,13 @@ public class LandProtectDB {
 		List<UUID> list = new ArrayList<>();
 		if (friendList.containsKey(playerUUID)) {
 			list = friendList.get(playerUUID);
+			list.add(friendUUID);
+			friendList.replace(playerUUID, list);
+		} else {
+			list.add(friendUUID);
+			friendList.put(playerUUID, list);
 		}
-		list.add(friendUUID);
-		friendList.replace(playerUUID, list);
+		
 	}
 	
 	public static void removeFriend(UUID playerUUID, UUID friendUUID) {

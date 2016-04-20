@@ -54,15 +54,30 @@ public class ChangeBlockListener {
 				playerUUID = player.getUniqueId();
 				
 				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+					
+					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+					if (owner.equals(playerUUID)) {
+						return;
+					}
+					
+					if (Utils.isFriend(playerUUID, owner)) {
+						return;
+					}
+					
+					if (Utils.isTrustedToClaim(chunk, playerUUID, worldUUID)) {
+						return;
+					}
+					
 					if (player.hasPermission("landprotect.claim.bypass")) {
 						return;
 					}
+					
 				} else {
 					if (player.hasPermission("landprotect.protect.bypass")) {
 						return;
 					}
 				}
-				
+				event.setCancelled(true);
 			} else {
 				event.setCancelled(true);
 				return;
@@ -114,6 +129,19 @@ public class ChangeBlockListener {
 				playerUUID = player.getUniqueId();
 				
 				if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
+					UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
+					if (owner.equals(playerUUID)) {
+						return;
+					}
+					
+					if (Utils.isFriend(playerUUID, owner)) {
+						return;
+					}
+					
+					if (Utils.isTrustedToClaim(chunk, playerUUID, worldUUID)) {
+						return;
+					}
+					
 					if (player.hasPermission("landprotect.claim.bypass")) {
 						return;
 					}

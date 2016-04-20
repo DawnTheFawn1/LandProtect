@@ -32,6 +32,7 @@ public class AcceptFriendRequestCommand implements CommandExecutor{
 						Player requester = Sponge.getServer().getPlayer(request.getRequester()).get();
 						if (!Utils.isFriend(player.getUniqueId(), requester.getUniqueId())) {
 							LandProtectDB.addFriend(player.getUniqueId(), requester.getUniqueId());
+							LandProtectDB.addFriend(requester.getUniqueId(), player.getUniqueId());
 							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You and ", TextColors.GOLD, requester.getName(), TextColors.DARK_AQUA, " are now friends"));
 							requester.sendMessage(Text.of(TextColors.DARK_AQUA, "You and ", TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, " are now friends"));
 							iterator.remove();

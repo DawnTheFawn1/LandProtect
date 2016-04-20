@@ -55,7 +55,7 @@ public class CommandRegistry {
 		
 		CommandSpec acceptFriend = CommandSpec.builder()
 				.description(Text.of("Accepts a player's friend request"))
-				.permission("landprotect.acceptfriend")
+				.permission("landprotect.acceptrequest")
 				.executor(new AcceptFriendRequestCommand())
 				.build();
 		commands.put(Arrays.asList("acceptrequest"), acceptFriend);
