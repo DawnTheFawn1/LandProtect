@@ -35,7 +35,7 @@ public class PlayerMoveListener {
 					User owner = service.get(ownerUUID).get();
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering the land of ", TextColors.GOLD, owner.getName()));
 				} else {
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "protected ", TextColors.DARK_AQUA, "land"));
+					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "AdminClaim"));
 				}
 				
 			} else if (Utils.isClaimed(oldChunk, worldUUID) && Utils.isClaimed(newChunk, worldUUID)) {
@@ -44,7 +44,7 @@ public class PlayerMoveListener {
 					return;
 					
 				} else if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent() && Utils.isAdminClaimed(newChunk, worldUUID)) {
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "protected ", TextColors.DARK_AQUA, "land"));
+					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "AdminClaim"));
 					
 				} else if (Utils.getClaimOwner(newChunk, worldUUID).isPresent()) {
 					

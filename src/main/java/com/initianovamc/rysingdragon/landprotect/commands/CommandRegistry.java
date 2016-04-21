@@ -32,7 +32,7 @@ public class CommandRegistry {
 		
 		CommandSpec addInteractable = CommandSpec.builder()
 				.description(Text.of("Adds a block as interactable in protected zones"))
-				.permission("landprotect.addinteractable")
+				.permission("landprotect.addinteractable.command")
 				.executor(new AddInteractableCommand())
 				.arguments(GenericArguments.optional(GenericArguments.string(Text.of("block-id"))))
 				.build();
@@ -47,7 +47,7 @@ public class CommandRegistry {
 		
 		CommandSpec addFriend = CommandSpec.builder()
 				.description(Text.of("Sends a request to a player so both of you will have access to each other's claims"))
-				.permission("landprotect.addfriend")
+				.permission("landprotect.addfriend.command")
 				.executor(new AddFriendCommand())
 				.arguments(GenericArguments.player(Text.of("friend")))
 				.build();
@@ -55,21 +55,21 @@ public class CommandRegistry {
 		
 		CommandSpec acceptFriend = CommandSpec.builder()
 				.description(Text.of("Accepts a player's friend request"))
-				.permission("landprotect.acceptrequest")
+				.permission("landprotect.acceptrequest.command")
 				.executor(new AcceptFriendRequestCommand())
 				.build();
 		commands.put(Arrays.asList("acceptrequest"), acceptFriend);
 		
-		CommandSpec protect = CommandSpec.builder()
-				.description(Text.of("Claims the chunk you're standing in as a protected area"))
-				.permission("landprotect.protect.command")
-				.executor(new ProtectCommand())
+		CommandSpec adminclaim = CommandSpec.builder()
+				.description(Text.of("Claims the chunk you're standing in as an adminclaim"))
+				.permission("landprotect.adminclaim.command")
+				.executor(new AdminClaimCommand())
 				.build();
-		commands.put(Arrays.asList("protect"), protect);
+		commands.put(Arrays.asList("adminclaim"), adminclaim);
 		
 		CommandSpec trust = CommandSpec.builder()
 				.description(Text.of("Adds the player access to your claim you're standing in"))
-				.permission("landprotect.trust")
+				.permission("landprotect.trust.command")
 				.executor(new TrustCommand())
 				.arguments(GenericArguments.user(Text.of("player")))
 				.build();
@@ -77,35 +77,35 @@ public class CommandRegistry {
 		
 		CommandSpec unclaim = CommandSpec.builder()
 				.description(Text.of("Unclaims the chunk you're standing in and removes all trusted people access to it"))
-				.permission("landprotect.unclaim")
+				.permission("landprotect.unclaim.command")
 				.executor(new UnclaimCommand())
 				.build();
 		commands.put(Arrays.asList("unclaim"), unclaim);
 		
-		CommandSpec unprotect = CommandSpec.builder()
-				.description(Text.of("Removes this chunk as a protected area"))
-				.permission("landprotect.unprotect")
-				.executor(new UnprotectCommand())
+		CommandSpec removeAdminclaim = CommandSpec.builder()
+				.description(Text.of("Removes this chunk as an adminclaim"))
+				.permission("landprotect.adminclaim.command")
+				.executor(new RemoveAdminClaimCommand())
 				.build();
-		commands.put(Arrays.asList("unprotect"), unprotect);
+		commands.put(Arrays.asList("removeadminclaim"), removeAdminclaim);
 		
 		CommandSpec help = CommandSpec.builder()
 				.description(Text.of("help command"))
-				.permission("landprotect.help")
+				.permission("landprotect.help.command")
 				.executor(new HelpCommand())
 				.build();
 		commands.put(Arrays.asList("help"), help);
 		
 		CommandSpec removeClaim = CommandSpec.builder()
 				.description(Text.of("forcefully removes a claimed chunk"))
-				.permission("landprotect.removeclaim")
+				.permission("landprotect.removeclaim.command")
 				.executor(new RemoveClaimCommand())
 				.build();
 		commands.put(Arrays.asList("removeclaim"), removeClaim);
 		
 		CommandSpec removeFriend = CommandSpec.builder()
 				.description(Text.of("removes the targeted player as a friend"))
-				.permission("landprotect.removefriend")
+				.permission("landprotect.removefriend.command")
 				.executor(new RemoveFriendCommand())
 				.arguments(GenericArguments.user(Text.of("friend")))
 				.build();
@@ -113,7 +113,7 @@ public class CommandRegistry {
 		
 		CommandSpec untrust = CommandSpec.builder()
 				.description(Text.of("Remove a player as trusted from your land"))
-				.permission("landprotect.untrust")
+				.permission("landprotect.untrust.command")
 				.executor(new UntrustCommand())
 				.arguments(GenericArguments.user(Text.of("player")))
 				.build();
@@ -121,14 +121,14 @@ public class CommandRegistry {
 		
 		CommandSpec interactableList = CommandSpec.builder()
 				.description(Text.of("List all interactable blocks"))
-				.permission("landprotect.listinteractables")
+				.permission("landprotect.listinteractables.command")
 				.executor(new InteractableListCommand())
 				.build();
 		commands.put(Arrays.asList("listinteractables"), interactableList);
 		
 		CommandSpec removeInteractable = CommandSpec.builder()
 				.description(Text.of("Remove a block from being interactable"))
-				.permission("landprotect.removeinteractable")
+				.permission("landprotect.removeinteractable.command")
 				.executor(new RemoveInteractableCommand())
 				.arguments(GenericArguments.optional(GenericArguments.string(Text.of("block-id"))))
 				.build();
@@ -136,14 +136,14 @@ public class CommandRegistry {
 		
 		CommandSpec reloadConfig = CommandSpec.builder()
 				.description(Text.of("reload config"))
-				.permission("landprotect.reloadconfig")
+				.permission("landprotect.reloadconfig.command")
 				.executor(new ReloadConfigCommand())
 				.build();
 		commands.put(Arrays.asList("reload"), reloadConfig);
 		
 		CommandSpec setInspectTool = CommandSpec.builder()
 				.description(Text.of("sets the inspector tool to toggle claims on/off"))
-				.permission("landprotect.settool")
+				.permission("landprotect.settool.command")
 				.executor(new SetClaimInspectToolCommand())
 				.arguments(GenericArguments.string(Text.of("item-id")))
 				.build();
@@ -151,7 +151,7 @@ public class CommandRegistry {
 		
 		CommandSpec setBoundaryBlock = CommandSpec.builder()
 				.description(Text.of("sets the block to which players see claim boundaries as"))
-				.permission("landprotect.setboundaryblock")
+				.permission("landprotect.setboundaryblock.command")
 				.executor(new SetBoundaryBlockCommand())
 				.arguments(GenericArguments.string(Text.of("block-id")))
 				.build();
