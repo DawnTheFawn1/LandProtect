@@ -84,7 +84,7 @@ public class CommandRegistry {
 		
 		CommandSpec removeAdminclaim = CommandSpec.builder()
 				.description(Text.of("Removes this chunk as an adminclaim"))
-				.permission("landprotect.adminclaim.command")
+				.permission("landprotect.removeadminclaim.command")
 				.executor(new RemoveAdminClaimCommand())
 				.build();
 		commands.put(Arrays.asList("removeadminclaim"), removeAdminclaim);
