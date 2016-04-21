@@ -1,10 +1,13 @@
 package com.initianovamc.rysingdragon.landprotect.commands;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.initianovamc.rysingdragon.landprotect.LandProtect;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import com.initianovamc.rysingdragon.landprotect.utils.ClaimBoundary;
+import com.initianovamc.rysingdragon.landprotect.utils.ClaimKey;
 import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -20,6 +23,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class ClaimCommand implements CommandExecutor{
 
@@ -64,13 +68,16 @@ public class ClaimCommand implements CommandExecutor{
 				
 				ClaimBoundary boundary = new ClaimBoundary(player, chunk);
 				boundary.spawn();
+				ClaimKey key = new ClaimKey(worldUUID, chunk);
 
-				if (!Utils.playerBoundaries.containsKey(player.getUniqueId())) {
-					Utils.playerBoundaries.put(player.getUniqueId(), new HashMap<>());
+				if (!Utils.claimBoundaries.containsKey(key)) {
+					Utils.claimBoundaries.put(key, boundary);
+					
 				}
-				Map<Vector3i, ClaimBoundary> map = Utils.playerBoundaries.get(player.getUniqueId());
-				map.put(chunk, boundary);
-				Utils.playerBoundaries.put(player.getUniqueId(), map);
+				Sponge.getScheduler().createTaskBuilder().execute(()-> {
+					boundary.reset(); 
+					Utils.claimBoundaries.remove(key);
+					}).delay(60, TimeUnit.SECONDS).submit(LandProtect.instance);
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));
 			}

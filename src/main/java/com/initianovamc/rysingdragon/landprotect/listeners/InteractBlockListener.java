@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.google.common.reflect.TypeToken;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.utils.ClaimBoundary;
+import com.initianovamc.rysingdragon.landprotect.utils.ClaimKey;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -30,17 +31,16 @@ public class InteractBlockListener {
 			if (player.getItemInHand().isPresent()) {
 				ItemType item = Sponge.getRegistry().getType(ItemType.class, Utils.getClaimInspectTool()).get();
 				if (player.getItemInHand().get().getItem().getType().equals(item)) {
-					if (Utils.playerBoundaries.containsKey(player.getUniqueId())) {
-						Map<Vector3i, ClaimBoundary> map = Utils.playerBoundaries.get(player.getUniqueId());
-						if (map.containsKey(player.getLocation().getChunkPosition())) {
-							ClaimBoundary boundary = map.get(player.getLocation().getChunkPosition());
-							boundary.reset();
-							map.remove(player.getLocation().getChunkPosition());
+					ClaimKey key = new ClaimKey(player.getWorld().getUniqueId(), player.getLocation().getChunkPosition());
+					if (Utils.claimBoundaries.containsKey(key)) {
+						ClaimBoundary boundary = Utils.claimBoundaries.get(key);
+						boundary.reset();
+						Utils.claimBoundaries.remove(key);
 						} else {
 							if (Utils.isClaimed(player.getLocation().getChunkPosition(), player.getWorld().getUniqueId())) {
 								ClaimBoundary boundary = new ClaimBoundary(player, player.getLocation().getChunkPosition());
 								boundary.spawn();
-								map.put(player.getLocation().getChunkPosition(), boundary);
+								Utils.claimBoundaries.put(key, boundary);
 							}
 						}
 					} 
@@ -133,4 +133,3 @@ public class InteractBlockListener {
 			}
 		}
 	}
-}

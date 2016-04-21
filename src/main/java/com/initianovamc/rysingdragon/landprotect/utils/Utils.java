@@ -23,7 +23,7 @@ public final class Utils {
 	public static List<FriendRequest> friendRequests = new ArrayList<>();
 	public static List<UUID> inAddInteractMode = new ArrayList<>();
 	public static List<UUID> inRemoveInteractMode = new ArrayList<>();
-	public static Map<UUID, Map<Vector3i, ClaimBoundary>> playerBoundaries = new HashMap<>();
+	public static Map<ClaimKey, ClaimBoundary> claimBoundaries = new HashMap<>();
 
 	public static boolean isClaimed(Vector3i chunk, UUID worldUUID) {
 		
