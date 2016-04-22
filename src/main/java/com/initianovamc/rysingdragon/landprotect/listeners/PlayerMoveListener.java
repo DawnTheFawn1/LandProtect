@@ -67,7 +67,7 @@ public class PlayerMoveListener {
 							i.offer(Keys.ITEM_DURABILITY, durability);
 							player.setBoots(i);
 							LandProtectDB.addPlayerClaim(new PlayerClaim(worldUUID, newChunk, player.getUniqueId()));
-							player.sendMessage(Text.of("claimed this chunk"));
+							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk"));
 							if (durability <= 0) {
 								player.setBoots(null);
 								return;
