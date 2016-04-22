@@ -19,10 +19,12 @@ public class ClaimBoundary {
 	
 	private Player player;
 	private Vector3i chunk;
+	private List<Location<World>> claimCorners;
 	
 	public ClaimBoundary(Player player, Vector3i chunk) {
 		this.player = player;
 		this.chunk = chunk;
+		this.claimCorners = getAllCorners();
 	}
 
 	private Optional<Location<World>> getSurfaceBlock(Location<World> location) {
@@ -60,7 +62,7 @@ public class ClaimBoundary {
 
 	public void spawn() {
 		
-		for (Location<World> location : getAllCorners()) {
+		for (Location<World> location : this.claimCorners) {
 			BlockType block = Sponge.getRegistry().getType(BlockType.class, Utils.getBoundaryBlock()).get();
 			player.sendBlockChange(getSurfaceBlock(location).get().getBlockPosition(), BlockState.builder().blockType(block).build());
 		}
@@ -69,13 +71,13 @@ public class ClaimBoundary {
 	
 	public void reset() {
 		
-		for (Location<World> location : getAllCorners()) {
+		for (Location<World> location : this.claimCorners) {
 			player.resetBlockChange(getSurfaceBlock(location).get().getBlockPosition());
 		}
 		
 	}
 	
-	public List<Location<World>> getFirstCorner() {
+	private List<Location<World>> getFirstCorner() {
 		
 		List<Location<World>> corner = new ArrayList<>();
 		
@@ -89,7 +91,7 @@ public class ClaimBoundary {
 		return corner;
 	}
 	
-	public List<Location<World>> getSecondCorner() {
+	private List<Location<World>> getSecondCorner() {
 		
 		List<Location<World>> corner = new ArrayList<>();
 		
@@ -103,7 +105,7 @@ public class ClaimBoundary {
 		return corner;
 	}
 	
-	public List<Location<World>> getThirdCorner() {
+	private List<Location<World>> getThirdCorner() {
 		
 		List<Location<World>> corner = new ArrayList<>();
 		
@@ -117,7 +119,7 @@ public class ClaimBoundary {
 		return corner;
 	}
 	
-	public List<Location<World>> getFourthCorner() {
+	private List<Location<World>> getFourthCorner() {
 		
 		List<Location<World>> corner = new ArrayList<>();
 		
@@ -131,7 +133,7 @@ public class ClaimBoundary {
 		return corner;
 	}
 	
-	public List<Location<World>> getAllCorners() {
+	private List<Location<World>> getAllCorners() {
 		
 		List<Location<World>> corners = new ArrayList<>();
 		
