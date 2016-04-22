@@ -34,7 +34,7 @@ import java.sql.SQLException;
 public class LandProtect {
 
 	public static final String PLUGIN_ID = "com.initianovamc.rysingdragon.landprotect";
-	public static final String PLUGIN_VERSION = "v3.0.2-BETA";
+	public static final String PLUGIN_VERSION = "v3.1.0-BETA";
 	public static final String PLUGIN_DESCRIPTION = "A land protection plugin";
 	public static final String PLUGIN_NAME = "LandProtect";
 	public static final String PLUGIN_AUTHOR = "RysingDragon";
