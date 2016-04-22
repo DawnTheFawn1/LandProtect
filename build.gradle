@@ -1,3 +1,7 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -22,5 +26,19 @@ repositories {
 
 dependencies {
     compile 'org.spongepowered:spongeapi:4.0.3'
-    compile 'com.github.Flibio:Updatifier:v1.4.0'
+    shadow 'com.github.Flibio:Updatifier:v1.4.0:api'
+}
+
+configurations {
+    compile.extendsFrom shadow
+}
+
+tasks.getByPath(':jar').enabled = false
+
+shadowJar {
+    dependencies {
+    include(dependency('com.github.Flibio:Updatifier:v1.4.0:api'))
+  }
+    configurations = [project.configurations.shadow]
+    classifier = ''
 }
