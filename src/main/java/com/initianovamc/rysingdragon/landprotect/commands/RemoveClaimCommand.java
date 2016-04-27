@@ -33,8 +33,7 @@ public class RemoveClaimCommand implements CommandExecutor{
 					LandProtectDB.removePlayerClaim(claim);
 					LandProtectDB.removeAllTrusts(claim);
 				});
-				
-				player.sendMessage(Text.of("Success!"));
+				player.sendMessage(Text.of(TextColors.DARK_AQUA, "Successfully removed this claim"));
 
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is not claimed by a player"));

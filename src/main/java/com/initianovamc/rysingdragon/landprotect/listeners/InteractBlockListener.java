@@ -31,44 +31,42 @@ public class InteractBlockListener {
 
 	@Listener
 	public void onInteract(InteractBlockEvent.Secondary event, @First Player player) {
-		if (event.getCause().containsType(Player.class)) {
-			
-			if (player.getItemInHand().isPresent()) {
-				ItemStack itemStack = player.getItemInHand().get();
-				if (event.getTargetBlock().getState().getType().equals(BlockTypes.ENCHANTING_TABLE)) {
-					int level = player.get(Keys.EXPERIENCE_LEVEL).get();
-					if (level >= 10) {
-						if (itemStack.getItem().equals(ItemTypes.LEATHER_BOOTS)) {
-							event.setCancelled(true);
-							ItemEnchantment ench = new ItemEnchantment(Enchantments.EFFICIENCY, 10);
-							List<ItemEnchantment> list = Arrays.asList(ench);
-							itemStack.offer(Keys.ITEM_ENCHANTMENTS, list);
-							itemStack.offer(Keys.HIDE_ENCHANTMENTS, true);
-							itemStack.offer(Keys.DISPLAY_NAME, Text.of("Claiming boots"));
-							itemStack.offer(Keys.ITEM_LORE, Arrays.asList(Text.of("boots that will claim land as you walk")));
-							itemStack.offer(Keys.ITEM_DURABILITY, 65);
-							player.setItemInHand(itemStack);
-							player.offer(Keys.EXPERIENCE_LEVEL, level - 10);
-						}
+		
+		if (player.getItemInHand().isPresent()) {
+			ItemStack itemStack = player.getItemInHand().get();
+			if (event.getTargetBlock().getState().getType().equals(BlockTypes.ENCHANTING_TABLE)) {
+				int level = player.get(Keys.EXPERIENCE_LEVEL).get();
+				if (level >= 10) {
+					if (itemStack.getItem().equals(ItemTypes.LEATHER_BOOTS)) {
+						event.setCancelled(true);
+						ItemEnchantment ench = new ItemEnchantment(Enchantments.EFFICIENCY, 10);
+						List<ItemEnchantment> list = Arrays.asList(ench);
+						itemStack.offer(Keys.ITEM_ENCHANTMENTS, list);
+						itemStack.offer(Keys.HIDE_ENCHANTMENTS, true);
+						itemStack.offer(Keys.DISPLAY_NAME, Text.of("Claiming boots"));
+						itemStack.offer(Keys.ITEM_LORE, Arrays.asList(Text.of("boots that will claim land as you walk")));
+						itemStack.offer(Keys.ITEM_DURABILITY, 65);
+						player.setItemInHand(itemStack);
+						player.offer(Keys.EXPERIENCE_LEVEL, level - 10);
 					}
 				}
-				
-				ItemType item = Sponge.getRegistry().getType(ItemType.class, Utils.getClaimInspectTool()).get();
-				if (itemStack.getItem().getType().equals(item)) {
-					ClaimKey key = new ClaimKey(player.getWorld().getUniqueId(), player.getLocation().getChunkPosition());
-					if (Utils.claimBoundaries.containsKey(key)) {
-						ClaimBoundary boundary = Utils.claimBoundaries.get(key);
-						boundary.reset();
-						Utils.claimBoundaries.remove(key);
-						} else {
-							if (Utils.isClaimed(player.getLocation().getChunkPosition(), player.getWorld().getUniqueId())) {
-								ClaimBoundary boundary = new ClaimBoundary(player, player.getLocation().getChunkPosition());
-								boundary.spawn();
-								Utils.claimBoundaries.put(key, boundary);
-							}
+			}
+			
+			ItemType item = Sponge.getRegistry().getType(ItemType.class, Utils.getClaimInspectTool()).get();
+			if (itemStack.getItem().getType().equals(item)) {
+				ClaimKey key = new ClaimKey(player.getWorld().getUniqueId(), player.getLocation().getChunkPosition());
+				if (Utils.claimBoundaries.containsKey(key)) {
+					ClaimBoundary boundary = Utils.claimBoundaries.get(key);
+					boundary.reset();
+					Utils.claimBoundaries.remove(key);
+					} else {
+						if (Utils.isClaimed(player.getLocation().getChunkPosition(), player.getWorld().getUniqueId())) {
+							ClaimBoundary boundary = new ClaimBoundary(player, player.getLocation().getChunkPosition());
+							boundary.spawn();
+							Utils.claimBoundaries.put(key, boundary);
 						}
-					} 
-				}
+					}
+				} 
 			}
 			
 			UUID worldUUID = player.getWorld().getUniqueId();
@@ -116,7 +114,7 @@ public class InteractBlockListener {
 				
 					if (Utils.isAdminClaimed(chunk, worldUUID)) {
 						
-						if (player.hasPermission("landprotect.protect.bypass")) {
+						if (player.hasPermission("landprotect.adminclaim.bypass")) {
 							return;
 						}
 						
@@ -124,7 +122,6 @@ public class InteractBlockListener {
 							List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
 							if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
 								event.setCancelled(true);
-								player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
 								return;
 							} else {
 								return;
@@ -135,24 +132,20 @@ public class InteractBlockListener {
 						
 					}
 					
-					if (Utils.isTrustedToClaim(chunk, player.getUniqueId(), worldUUID)) {
-						return;
-					}
-					
 					if (Utils.getClaimOwner(chunk, worldUUID).isPresent()) {
 						UUID owner = Utils.getClaimOwner(chunk, worldUUID).get();
 						if (owner.equals(player.getUniqueId())) {
 							return;
 						} else if (Utils.isFriend(owner, player.getUniqueId())) {
 							return;
+						} else if (Utils.isTrustedToClaim(chunk, player.getUniqueId(), worldUUID)) {
+							return;
+						} else if (player.hasPermission("landprotect.claim.bypass")) {
+							return;
 						}
+						event.setCancelled(true);
 					}
-					
-					if (player.hasPermission("landprotect.claim.bypass")) {
-						return;
-					}	
-					event.setCancelled(true);
-					player.sendMessage(Text.of(TextColors.RED, "This land is claimed"));
+						
 				}
 			}
 		}

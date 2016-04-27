@@ -51,7 +51,7 @@ public class AddFriendCommand implements CommandExecutor{
 			}
 			
 			player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have sent a friend request to ", TextColors.GOLD, friend.getName(), TextColors.DARK_AQUA, ", They have 60 seconds to accept"));
-			friend.sendMessage(Text.of(TextColors.DARK_AQUA, "You have a pending friend request from ", TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, ", You have 60 seconds to accept"));
+			friend.sendMessage(Text.of(TextColors.DARK_AQUA, "You have a pending friend request from ", TextColors.GOLD, player.getName(), TextColors.DARK_AQUA, ", Type /lp acceptrequest to accept."));
 			FriendRequest friendRequest = new FriendRequest(player.getUniqueId(), friend.getUniqueId());
 			Utils.friendRequests.add(friendRequest);
 			

@@ -2,6 +2,7 @@ package com.initianovamc.rysingdragon.landprotect.listeners;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.Messages;
 import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
 import org.spongepowered.api.Sponge;
@@ -19,6 +20,7 @@ import org.spongepowered.api.service.permission.option.OptionSubject;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -60,8 +62,6 @@ public class PlayerMoveListener {
 									e.printStackTrace();
 								}
 							}
-							
-							
 							int durabilityToRemove = (int) (65 * 0.05);
 							int durability = i.get(Keys.ITEM_DURABILITY).get() - durabilityToRemove;
 							i.offer(Keys.ITEM_DURABILITY, durability);
@@ -79,41 +79,16 @@ public class PlayerMoveListener {
 			}
 			
 			if (Utils.isClaimed(oldChunk, worldUUID) && !Utils.isClaimed(newChunk, worldUUID)) {
-				player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering unclaimed land"));
+				player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(Messages.UNCLAIMED_MESSAGE));
 				
-			} else if (!Utils.isClaimed(oldChunk, worldUUID) && Utils.isClaimed(newChunk, worldUUID)) {
+			} else if (!Utils.isPlayerClaimed(oldChunk, worldUUID) && Utils.isPlayerClaimed(newChunk, worldUUID)) {
+				UUID ownerUUID = Utils.getClaimOwner(newChunk, worldUUID).get();
+				UserStorageService service = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
+				User owner = service.get(ownerUUID).get();
+				player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(Messages.PLAYERCLAIM_MESSAGE.replace("@player", owner.getName())));
 				
-				if (Utils.getClaimOwner(newChunk, worldUUID).isPresent()) {
-					UUID ownerUUID = Utils.getClaimOwner(newChunk, worldUUID).get();
-					UserStorageService service = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
-					User owner = service.get(ownerUUID).get();
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering the land of ", TextColors.GOLD, owner.getName()));
-				} else {
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "AdminClaim"));
-				}
-				
-			} else if (Utils.isClaimed(oldChunk, worldUUID) && Utils.isClaimed(newChunk, worldUUID)) {
-				
-				if (Utils.isAdminClaimed(oldChunk, worldUUID) && Utils.isAdminClaimed(newChunk, worldUUID)) {
-					return;
-					
-				} else if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent() && Utils.isAdminClaimed(newChunk, worldUUID)) {
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering ", TextColors.GOLD, "AdminClaim"));
-					
-				} else if (Utils.getClaimOwner(newChunk, worldUUID).isPresent()) {
-					
-					if (Utils.getClaimOwner(oldChunk, worldUUID).isPresent()) {
-						if (Utils.getClaimOwner(oldChunk, worldUUID).get().equals(Utils.getClaimOwner(newChunk, worldUUID).get())) {
-							return;
-						}
-					}
-					
-					UUID ownerUUID = Utils.getClaimOwner(newChunk, worldUUID).get();
-					UserStorageService service = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
-					User owner = service.get(ownerUUID).get();
-					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Now entering the land of ", TextColors.GOLD, owner.getName()));
-				}
-				
+			} else if (!Utils.isAdminClaimed(oldChunk, worldUUID) && Utils.isAdminClaimed(newChunk, worldUUID)) {
+				player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(Messages.ADMINCLAIM_MESSAGE));
 			}
 		}
 		

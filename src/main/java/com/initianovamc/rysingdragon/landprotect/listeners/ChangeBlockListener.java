@@ -44,11 +44,11 @@ public class ChangeBlockListener {
 						return;
 					}
 				} else {
-					if (user.hasPermission("landprotect.protect.bypass")) {
+					if (user.hasPermission("landprotect.adminclaim.bypass")) {
 						return;
 					}
 				}
-				
+				event.setCancelled(true);
 			} else if (event.getCause().first(Player.class).isPresent()) {
 				Player player = event.getCause().first(Player.class).get();
 				playerUUID = player.getUniqueId();
@@ -73,17 +73,12 @@ public class ChangeBlockListener {
 					}
 					
 				} else {
-					if (player.hasPermission("landprotect.protect.bypass")) {
+					if (player.hasPermission("landprotect.adminclaim.bypass")) {
 						return;
 					}
 				}
 				event.setCancelled(true);
-			} else {
-				event.setCancelled(true);
-				return;
-			}
-			
-			event.setCancelled(true);
+			} 
 		}
 	}
 	
@@ -119,11 +114,11 @@ public class ChangeBlockListener {
 						return;
 					}
 				} else {
-					if (user.hasPermission("landprotect.protect.bypass")) {
+					if (user.hasPermission("landprotect.adminclaim.bypass")) {
 						return;
 					}
 				}
-				
+				event.setCancelled(true);
 			} else if (event.getCause().first(Player.class).isPresent()) {
 				Player player = event.getCause().first(Player.class).get();
 				playerUUID = player.getUniqueId();
@@ -146,17 +141,12 @@ public class ChangeBlockListener {
 						return;
 					}
 				} else {
-					if (player.hasPermission("landprotect.protect.bypass")) {
+					if (player.hasPermission("landprotect.adminclaim.bypass")) {
 						return;
 					}
 				}
-				
-			} else {
 				event.setCancelled(true);
-				return;
-			}
-			
-			event.setCancelled(true);
+			} 
 		}
 	}
 	

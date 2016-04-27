@@ -6,6 +6,8 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -69,6 +71,9 @@ public class GeneralConfig implements Configuration{
 		configNode.getNode("MySQL", "username").setValue("user");
 		configNode.getNode("MySQL", "password").setValue("pass");
 		configNode.getNode("DataTransfer").setValue(false).setComment("Transfers claims and friends to the newer, more optimized system. Claims and friends will no longer be saved in configs even if this is false");
+		configNode.getNode("Messages", "UnclaimedMessage").setValue("&3Now entering unclaimed land");
+		configNode.getNode("Messages", "PlayerClaimedMessage").setValue("&3Now entering the land of &6@player");
+		configNode.getNode("Messages", "AdminClaimedMessage").setValue("&3Now entering &6AdminClaim");
 	}
 
 	@Override
@@ -92,6 +97,9 @@ public class GeneralConfig implements Configuration{
 		if (configNode.getNode("MySQL", "username").getValue() == null) configNode.getNode("MySQL", "username").setValue("user");
 		if (configNode.getNode("MySQL", "password").getValue() == null) configNode.getNode("MySQL", "password").setValue("pass");	
 		if (configNode.getNode("DataTransfer").getValue() == null) configNode.getNode("DataTransfer").setValue(false).setComment("Transfers claims and friends to the newer, more optimized system. Claims and friends will no longer be saved in configs even if this is false");
+		if (configNode.getNode("Messages", "UnclaimedMessage").getValue() == null) configNode.getNode("Messages", "UnclaimedMessage").setValue("&3Now entering unclaimed land");
+		if (configNode.getNode("Messages", "PlayerClaimedMessage").getValue() == null) configNode.getNode("Messages", "PlayerClaimedMessage").setValue("&3Now entering the land of &6@player");
+		if (configNode.getNode("Messages", "AdminClaimedMessage").getValue() == null) configNode.getNode("Messages", "AdminClaimedMessage").setValue("&3Now entering &6AdminClaim");
 		save();
 	}
 	
