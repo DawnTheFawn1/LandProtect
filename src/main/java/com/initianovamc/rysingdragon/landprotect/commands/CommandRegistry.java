@@ -157,8 +157,24 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("setboundaryblock", "sbb"), setBoundaryBlock);
 		
-		return commands;
+		CommandSpec reloadData = CommandSpec.builder()
+				.permission("landprotect.datareload.command")
+				.executor(new ReloadDataCommand())
+				.build();
+		commands.put(Arrays.asList("datareload"), reloadData);
 		
+		CommandSpec buyClaims = CommandSpec.builder()
+				.arguments(GenericArguments.integer(Text.of("claims")))
+				.executor(new BuyClaimsCommand())
+				.build();
+		commands.put(Arrays.asList("buyclaims"), buyClaims);
+		
+		CommandSpec listClaims = CommandSpec.builder()
+				.executor(new ListClaimsCommand())
+				.build();
+		commands.put(Arrays.asList("listclaims"), listClaims);
+		
+		return commands;
 	}
 	
 }
