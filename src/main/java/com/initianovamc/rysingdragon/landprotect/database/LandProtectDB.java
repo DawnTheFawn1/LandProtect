@@ -26,8 +26,8 @@ import javax.sql.DataSource;
 
 public class LandProtectDB {
 
-	private static SqlService sql;
-	private static DataSource dataSource;
+	public static SqlService sql;
+	public static DataSource dataSource;
 	public static Map<ClaimKey, PlayerClaim> playerclaims = new HashMap<>();
 	public static Map<ClaimKey, AdminClaim> adminclaims = new HashMap<>();
 	public static Map<ClaimKey, List<UUID>> trustedPlayers = new HashMap<>();
