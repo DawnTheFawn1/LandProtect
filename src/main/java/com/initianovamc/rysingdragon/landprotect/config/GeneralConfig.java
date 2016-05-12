@@ -10,6 +10,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,9 @@ public class GeneralConfig implements Configuration{
 		configNode.getNode("Messages", "UnclaimedMessage").setValue("&3Now entering unclaimed land");
 		configNode.getNode("Messages", "PlayerClaimedMessage").setValue("&3Now entering the land of &6@player");
 		configNode.getNode("Messages", "AdminClaimedMessage").setValue("&3Now entering &6AdminClaim");
+		configNode.getNode("EconomyEnabled").setValue(false).setComment("Whether or not to use economy.");
+		configNode.getNode("BonusClaims", "EconomyPrice").setValue(new BigDecimal(100.00)).setComment("price for each claim when using the buyclaims command with economy");
+		configNode.getNode("BonusClaims", "ExperiencePrice").setValue(150).setComment("price in exp points for each claim, this is what is used when not using economy.");		
 	}
 
 	@Override
@@ -100,6 +104,9 @@ public class GeneralConfig implements Configuration{
 		if (configNode.getNode("Messages", "UnclaimedMessage").getValue() == null) configNode.getNode("Messages", "UnclaimedMessage").setValue("&3Now entering unclaimed land");
 		if (configNode.getNode("Messages", "PlayerClaimedMessage").getValue() == null) configNode.getNode("Messages", "PlayerClaimedMessage").setValue("&3Now entering the land of &6@player");
 		if (configNode.getNode("Messages", "AdminClaimedMessage").getValue() == null) configNode.getNode("Messages", "AdminClaimedMessage").setValue("&3Now entering &6AdminClaim");
+		if (configNode.getNode("EconomyEnabled").getValue() == null) configNode.getNode("EconomyEnabled").setValue(false).setComment("Whether or not to use economy");
+		if (configNode.getNode("BonusClaims", "EconomyPrice").getValue() == null) configNode.getNode("BonusClaims", "EconomyPrice").setValue(new BigDecimal(100.00)).setComment("price for each claim when using the buyclaims command with economy");
+		if (configNode.getNode("BonusClaims", "ExperiencePrice").getValue() == null) configNode.getNode("BonusClaims", "ExperiencePrice").setValue(150).setComment("price in exp points for each claim, this is what is used when not using economy.");
 		save();
 	}
 	

@@ -11,6 +11,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.World;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -202,6 +203,18 @@ public final class Utils {
 		transferAdminClaims();
 		transferPlayerClaims();
 		transferTrustedPlayers();
+	}
+	
+	public static boolean economyEnabled() {
+		return GeneralConfig.getConfig().getConfigNode().getNode("EconomyEnabled").getBoolean();
+	}
+	
+	public static int getExpPrice() {
+		return GeneralConfig.getConfig().getConfigNode().getNode("BonusClaims", "ExperiencePrice").getInt();
+	}
+	
+	public static BigDecimal getEconomyPrice() {
+		return (BigDecimal) GeneralConfig.getConfig().getConfigNode().getNode("BonusClaims", "EconomyPrice").getValue();
 	}
 	
 }
