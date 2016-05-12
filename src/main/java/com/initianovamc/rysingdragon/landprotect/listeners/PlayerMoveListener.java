@@ -87,6 +87,15 @@ public class PlayerMoveListener {
 				User owner = service.get(ownerUUID).get();
 				player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(Messages.PLAYERCLAIM_MESSAGE.replace("@player", owner.getName())));
 				
+			} else if (Utils.isPlayerClaimed(oldChunk, worldUUID)&& Utils.isPlayerClaimed(newChunk, worldUUID)) {
+				if (!Utils.getClaimOwner(oldChunk, worldUUID).get().equals(Utils.getClaimOwner(newChunk, worldUUID).get())) {
+					UUID ownerUUID = Utils.getClaimOwner(newChunk, worldUUID).get();
+					UserStorageService service = Sponge.getGame().getServiceManager().provide(UserStorageService.class).get();
+					User owner = service.get(ownerUUID).get();
+					player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(Messages.PLAYERCLAIM_MESSAGE.replace("@player", owner.getName())));
+				}
+				
+				
 			} else if (!Utils.isAdminClaimed(oldChunk, worldUUID) && Utils.isAdminClaimed(newChunk, worldUUID)) {
 				player.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(Messages.ADMINCLAIM_MESSAGE));
 			}
