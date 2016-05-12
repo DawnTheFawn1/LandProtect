@@ -22,12 +22,14 @@ import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.economy.EconomyService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Updatifier(repoName = "LandProtect", repoOwner = "RysingDragon", version = LandProtect.PLUGIN_VERSION)
 @Plugin(name = LandProtect.PLUGIN_NAME, id = LandProtect.PLUGIN_ID, version = LandProtect.PLUGIN_VERSION, description = LandProtect.PLUGIN_DESCRIPTION, authors = LandProtect.PLUGIN_AUTHOR, dependencies = @Dependency(id = "Updatifier", optional = true))
@@ -39,6 +41,7 @@ public class LandProtect {
 	public static final String PLUGIN_NAME = "LandProtect";
 	public static final String PLUGIN_AUTHOR = "RysingDragon";
 	public static LandProtect instance;
+	public static EconomyService economy;
 	
 	@Inject
 	private Logger logger;
@@ -89,6 +92,10 @@ public class LandProtect {
 	
 	@Listener
 	public void onInit(GameInitializationEvent event) {
+		Optional<EconomyService> service = Sponge.getServiceManager().provide(EconomyService.class);
+		if (service.isPresent()) {
+			economy = service.get();
+		}
 		logger.info("Registering commands and event listeners");
 		CommandRegistry.registerCommands();
 		Sponge.getGame().getEventManager().registerListeners(this, new ChangeBlockListener());
