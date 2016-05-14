@@ -158,18 +158,23 @@ public class CommandRegistry {
 		commands.put(Arrays.asList("setboundaryblock", "sbb"), setBoundaryBlock);
 		
 		CommandSpec reloadData = CommandSpec.builder()
+				.description(Text.of("command that reloads the database"))
 				.permission("landprotect.datareload.command")
 				.executor(new ReloadDataCommand())
 				.build();
 		commands.put(Arrays.asList("datareload"), reloadData);
 		
 		CommandSpec buyClaims = CommandSpec.builder()
+				.description(Text.of("buys the specified amount of claims using either economy currency if enabled or using experience points"))
+				.permission("landprotect.buyclaims.command")
 				.arguments(GenericArguments.integer(Text.of("claims")))
 				.executor(new BuyClaimsCommand())
 				.build();
 		commands.put(Arrays.asList("buyclaims"), buyClaims);
 		
 		CommandSpec listClaims = CommandSpec.builder()
+				.description(Text.of("lists all of your claims in each world by chunk coordinates"))
+				.permission("landprotect.listclaims.command")
 				.executor(new ListClaimsCommand())
 				.build();
 		commands.put(Arrays.asList("listclaims"), listClaims);
