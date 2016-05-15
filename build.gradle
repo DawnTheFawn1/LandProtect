@@ -10,7 +10,7 @@ targetCompatibility = 1.8
 
 group = "com.initianovamc.rysingdragon"
 archivesBaseName = "LandProtect"
-version = '3.3.0'
+version = '3.3.1'
 
 repositories {
     mavenCentral()

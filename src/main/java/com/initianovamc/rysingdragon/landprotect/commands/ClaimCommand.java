@@ -50,8 +50,9 @@ public class ClaimCommand implements CommandExecutor{
 						int claimAmount;
 						try {
 							claimAmount = LandProtectDB.getPlayerClaimAmount(player.getUniqueId());
+							int bonus = Integer.parseInt(optSubject.getOption("bonusclaims").orElse("0"));
 							if (claimLimit != 0) {
-								if (claimAmount >= claimLimit) {
+								if (claimAmount >= claimLimit + bonus) {
 									player.sendMessage(Text.of(TextColors.RED, "You have reached the max claim limit"));
 									return CommandResult.success();
 								} 
