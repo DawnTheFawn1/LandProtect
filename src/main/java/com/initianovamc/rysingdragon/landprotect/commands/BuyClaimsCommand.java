@@ -49,6 +49,12 @@ public class BuyClaimsCommand implements CommandExecutor{
 						return CommandResult.success();
 					} 
 					int bonus = Integer.parseInt(optSubject.getOption("bonusclaims").orElse("0"));
+					if (claimsToBuy + bonus > Utils.getBonusClaimLimit()) {
+						player.sendMessage(Text.of(TextColors.RED, "Invalid transaction! You currently have " + bonus + " bought claims."));
+						player.sendMessage(Text.of(TextColors.RED, "Buying " + claimsToBuy + " claims would be over the limit of " + Utils.getBonusClaimLimit()));
+						return CommandResult.empty();
+					}
+					
 					optData.setOption(optData.GLOBAL_CONTEXT, "bonusclaims", String.valueOf(claimsToBuy + bonus));
 					LandProtect.economy.getOrCreateAccount(player.getUniqueId()).get().setBalance(LandProtect.economy.getDefaultCurrency(), currentAmount.subtract(amountNeeded), Cause.of(NamedCause.source(LandProtect.instance)));
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Successfully bought ", claimsToBuy, " claims"));
@@ -63,6 +69,12 @@ public class BuyClaimsCommand implements CommandExecutor{
 						return CommandResult.success();
 					}
 					int bonus = Integer.parseInt(optSubject.getOption("bonusclaims").orElse("0"));
+					if (claimsToBuy + bonus > Utils.getBonusClaimLimit()) {
+						player.sendMessage(Text.of(TextColors.RED, "Invalid transaction! You currently have " + bonus + " bought claims."));
+						player.sendMessage(Text.of(TextColors.RED, "Buying " + claimsToBuy + " claims would be over the limit of " + Utils.getBonusClaimLimit()));
+						return CommandResult.empty();
+					}
+					
 					optData.setOption(optData.GLOBAL_CONTEXT, "bonusclaims", String.valueOf(claimsToBuy + bonus));
 					player.offer(Keys.EXPERIENCE_LEVEL, currentExp - expNeeded);
 					player.sendMessage(Text.of(TextColors.DARK_AQUA, "Successfully bought ", claimsToBuy, " claims"));

@@ -78,6 +78,7 @@ public class GeneralConfig implements Configuration{
 		configNode.getNode("EconomyEnabled").setValue(false).setComment("Whether or not to use economy.");
 		configNode.getNode("BonusClaims", "EconomyPrice").setValue(new BigDecimal(100.00)).setComment("price for each claim when using the buyclaims command with economy");
 		configNode.getNode("BonusClaims", "ExperiencePrice").setValue(150).setComment("price in exp points for each claim, this is what is used when not using economy.");		
+		configNode.getNode("BonusClaims", "ClaimLimit").setValue(25).setComment("Amount of bonus claims a player is allowed to buy");
 	}
 
 	@Override
@@ -107,6 +108,7 @@ public class GeneralConfig implements Configuration{
 		if (configNode.getNode("EconomyEnabled").getValue() == null) configNode.getNode("EconomyEnabled").setValue(false).setComment("Whether or not to use economy");
 		if (configNode.getNode("BonusClaims", "EconomyPrice").getValue() == null) configNode.getNode("BonusClaims", "EconomyPrice").setValue(new BigDecimal(100.00)).setComment("price for each claim when using the buyclaims command with economy");
 		if (configNode.getNode("BonusClaims", "ExperiencePrice").getValue() == null) configNode.getNode("BonusClaims", "ExperiencePrice").setValue(150).setComment("price in exp points for each claim, this is what is used when not using economy.");
+		if (configNode.getNode("BonusClaims", "ClaimLimit").getValue() == null) configNode.getNode("BonusClaims", "ClaimLimit").setValue(25).setComment("Amount of bonus claims a player is allowed to buy");
 		save();
 	}
 	
