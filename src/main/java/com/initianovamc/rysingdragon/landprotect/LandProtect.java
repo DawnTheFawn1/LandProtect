@@ -5,8 +5,11 @@ import com.initianovamc.rysingdragon.landprotect.commands.CommandRegistry;
 import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
+import com.initianovamc.rysingdragon.landprotect.config.WorldConfig;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import com.initianovamc.rysingdragon.landprotect.listeners.ChangeBlockListener;
+import com.initianovamc.rysingdragon.landprotect.listeners.InteractEntityListener;
+import com.initianovamc.rysingdragon.landprotect.listeners.EntityMoveListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.InteractBlockListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.LoadWorldListener;
 import com.initianovamc.rysingdragon.landprotect.listeners.PlayerMoveListener;
@@ -36,7 +39,7 @@ import java.util.Optional;
 public class LandProtect {
 
 	public static final String PLUGIN_ID = "com.initianovamc.rysingdragon.landprotect";
-	public static final String PLUGIN_VERSION = "v3.3.1";
+	public static final String PLUGIN_VERSION = "v3.4.0";
 	public static final String PLUGIN_DESCRIPTION = "A land protection plugin";
 	public static final String PLUGIN_NAME = "LandProtect";
 	public static final String PLUGIN_AUTHOR = "RysingDragon";
@@ -66,6 +69,7 @@ public class LandProtect {
 			}
 		}
 		GeneralConfig.getConfig().setup();
+		WorldConfig.getConfig().setup();
 		
 		if (Utils.legacyTransferEnabled()) {
 			try {
@@ -102,6 +106,8 @@ public class LandProtect {
 		Sponge.getGame().getEventManager().registerListeners(this, new InteractBlockListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new PlayerMoveListener());
 		Sponge.getGame().getEventManager().registerListeners(this, new LoadWorldListener());
+		Sponge.getGame().getEventManager().registerListeners(this, new EntityMoveListener());
+		Sponge.getGame().getEventManager().registerListeners(this, new InteractEntityListener());
 	}
 	
 	@Listener

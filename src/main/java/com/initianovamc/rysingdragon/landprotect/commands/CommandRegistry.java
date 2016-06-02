@@ -179,6 +179,27 @@ public class CommandRegistry {
 				.build();
 		commands.put(Arrays.asList("listclaims"), listClaims);
 		
+		CommandSpec claimBoots = CommandSpec.builder()
+				.description(Text.of("gives boots for adminclaiming"))
+				.permission("landprotect.giveclaimboots.command")
+				.executor(new ClaimBootsCommand())
+				.build();
+		commands.put(Arrays.asList("giveclaimboots"), claimBoots);
+		
+		CommandSpec addUnallowedEntity = CommandSpec.builder()
+				.description(Text.of("adds the entity to list of entities not allowed to be ridden"))
+				.permission("landprotect.addunallowedentity.command")
+				.executor(new AddUnallowedEntityCommand())
+				.build();
+		commands.put(Arrays.asList("addunallowedentity"), addUnallowedEntity);
+		
+		CommandSpec removeUnallowedEntity = CommandSpec.builder()
+				.description(Text.of("removes the entity from list of entities not allowed to be ridden"))
+				.permission("landprotect.removeunallowedentity.command")
+				.executor(new AddUnallowedEntityCommand())
+				.build();
+		commands.put(Arrays.asList("removeunallowedentity"), removeUnallowedEntity);
+		
 		return commands;
 	}
 	

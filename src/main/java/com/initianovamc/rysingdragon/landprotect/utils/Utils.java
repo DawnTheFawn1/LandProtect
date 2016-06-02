@@ -6,6 +6,7 @@ import com.initianovamc.rysingdragon.landprotect.LandProtect;
 import com.initianovamc.rysingdragon.landprotect.config.ClaimConfig;
 import com.initianovamc.rysingdragon.landprotect.config.GeneralConfig;
 import com.initianovamc.rysingdragon.landprotect.config.PlayerConfig;
+import com.initianovamc.rysingdragon.landprotect.config.WorldConfig;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
@@ -87,7 +88,7 @@ public final class Utils {
 	}
 
 	public static boolean claimingEnabled(UUID worldUUID) {
-		return GeneralConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "ClaimingEnabled").getBoolean();
+		return WorldConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "ClaimingEnabled").getBoolean();
 	}
 	
 	public static String getBoundaryBlock() {
@@ -214,7 +215,39 @@ public final class Utils {
 	}
 	
 	public static BigDecimal getEconomyPrice() {
-		return (BigDecimal) GeneralConfig.getConfig().getConfigNode().getNode("BonusClaims", "EconomyPrice").getValue();
+		return new BigDecimal(GeneralConfig.getConfig().getConfigNode().getNode("BonusClaims", "EconomyPrice").getInt());
+	}
+	
+	public static boolean adminClaimRidingEnabled(UUID worldUUID) {
+		return WorldConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "Riding", "EnabledInAdminClaims").getBoolean();
+	}
+	
+	public static boolean playerClaimRidingEnabled(UUID worldUUID) {
+		return WorldConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "Riding", "EnabledInPlayerClaims").getBoolean();
+	}
+	
+	public static boolean ridingEnabled(UUID worldUUID, Vector3i chunk, String entityID) {
+		if (getUnallowedEntites(worldUUID).contains(entityID)) {
+			if (!adminClaimRidingEnabled(worldUUID) && isAdminClaimed(chunk, worldUUID)) {
+				return false;
+			} else if (!playerClaimRidingEnabled(worldUUID) && isPlayerClaimed(chunk, worldUUID)) {
+				return false;
+			}
+		} 
+		return true;
+	}
+	
+	public static List<String> getUnallowedEntites(UUID worldUUID) {
+		try {
+			return WorldConfig.getConfig().getConfigNode().getNode("Worlds", worldUUID.toString(), "Riding", "UnallowedEntities").getList(TypeToken.of(String.class));
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<>();
+	}
+	
+	public static int getBonusClaimLimit() {
+		return GeneralConfig.getConfig().getConfigNode().getNode("BonusClaims", "ClaimLimit").getInt();
 	}
 	
 }

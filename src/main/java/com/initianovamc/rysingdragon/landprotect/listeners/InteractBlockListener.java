@@ -122,6 +122,7 @@ public class InteractBlockListener {
 							List<String> interactables = GeneralConfig.getConfig().getConfigNode().getNode("Interactable").getList(TypeToken.of(String.class), new ArrayList<>());
 							if (!interactables.contains(event.getTargetBlock().getState().getType().getName())) {
 								event.setCancelled(true);
+								player.sendMessage(Text.of(TextColors.RED, "You are not allowed to interact with that block in this claim"));
 								return;
 							} else {
 								return;
@@ -144,6 +145,7 @@ public class InteractBlockListener {
 							return;
 						}
 						event.setCancelled(true);
+						player.sendMessage(Text.of(TextColors.RED, "You are not allowed to interact with that block in this claim"));
 					}
 						
 				}
