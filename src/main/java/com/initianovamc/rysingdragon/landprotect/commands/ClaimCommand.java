@@ -52,7 +52,7 @@ public class ClaimCommand implements CommandExecutor{
 							claimAmount = LandProtectDB.getPlayerClaimAmount(player.getUniqueId());
 							int bonus = Integer.parseInt(optSubject.getOption("bonusclaims").orElse("0"));
 							if (claimLimit != 0) {
-								if (claimAmount >= claimLimit + bonus) {
+								if (claimAmount + bonus >= claimLimit) {
 									player.sendMessage(Text.of(TextColors.RED, "You have reached the max claim limit"));
 									return CommandResult.success();
 								} 
@@ -68,17 +68,7 @@ public class ClaimCommand implements CommandExecutor{
 				player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk"));
 				
 				ClaimBoundary boundary = new ClaimBoundary(player, chunk);
-				boundary.spawn();
-				ClaimKey key = new ClaimKey(worldUUID, chunk);
-
-				if (!Utils.claimBoundaries.containsKey(key)) {
-					Utils.claimBoundaries.put(key, boundary);
-					
-				}
-				Sponge.getScheduler().createTaskBuilder().execute(()-> {
-					boundary.reset(); 
-					Utils.claimBoundaries.remove(key);
-					}).delay(60, TimeUnit.SECONDS).submit(LandProtect.instance);
+				boundary.spawnTimedResetDelay(TimeUnit.SECONDS, 60);
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));
 			}

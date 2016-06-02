@@ -33,16 +33,7 @@ public class AdminClaimCommand implements CommandExecutor{
 			if (!Utils.isClaimed(chunk, worldUUID)) {
 				LandProtectDB.addAdminClaim(new AdminClaim(worldUUID, chunk));
 				ClaimBoundary boundary = new ClaimBoundary(player, chunk);
-				boundary.spawn();
-				ClaimKey key = new ClaimKey(worldUUID, chunk);
-				if (!Utils.claimBoundaries.containsKey(key)) {
-					Utils.claimBoundaries.put(key, boundary);
-				}
-				Sponge.getScheduler().createTaskBuilder().execute(()-> {
-					boundary.reset(); 
-					Utils.claimBoundaries.remove(key);
-					}).delay(60, TimeUnit.SECONDS).submit(LandProtect.instance);
-				
+				boundary.spawnTimedResetDelay(TimeUnit.SECONDS, 60);
 				player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk as adminclaim"));
 			} else {
 				player.sendMessage(Text.of(TextColors.RED, "This land is already claimed"));

@@ -2,6 +2,8 @@ package com.initianovamc.rysingdragon.landprotect.listeners;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.initianovamc.rysingdragon.landprotect.database.LandProtectDB;
+import com.initianovamc.rysingdragon.landprotect.utils.AdminClaim;
+import com.initianovamc.rysingdragon.landprotect.utils.ClaimBoundary;
 import com.initianovamc.rysingdragon.landprotect.utils.Messages;
 import com.initianovamc.rysingdragon.landprotect.utils.PlayerClaim;
 import com.initianovamc.rysingdragon.landprotect.utils.Utils;
@@ -26,6 +28,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerMoveListener {
 
@@ -41,8 +44,8 @@ public class PlayerMoveListener {
 			if (!Utils.isClaimed(newChunk, worldUUID)) {
 				Optional<ItemStack> optItem = player.getBoots();
 				if (optItem.isPresent()) {
-					if (optItem.get().getItem().equals(ItemTypes.LEATHER_BOOTS) && optItem.get().get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
-						ItemStack i = optItem.get();
+					ItemStack i = optItem.get();
+					if (i.getItem().equals(ItemTypes.LEATHER_BOOTS) && i.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
 						List<ItemEnchantment> list = i.get(Keys.ITEM_ENCHANTMENTS).get();
 						if (list.get(0).getLevel() == 10 && list.get(0).getEnchantment().equals(Enchantments.EFFICIENCY)) {
 							
@@ -67,12 +70,23 @@ public class PlayerMoveListener {
 							i.offer(Keys.ITEM_DURABILITY, durability);
 							player.setBoots(i);
 							LandProtectDB.addPlayerClaim(new PlayerClaim(worldUUID, newChunk, player.getUniqueId()));
+							ClaimBoundary boundary = new ClaimBoundary(player, newChunk);
+							boundary.spawnTimedResetDelay(TimeUnit.SECONDS, 60);
 							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk"));
+							
 							if (durability <= 0) {
 								player.setBoots(null);
 								return;
 							}
 							return;
+						}
+					} else if (i.getItem().equals(ItemTypes.CHAINMAIL_BOOTS) && i.get(Keys.ITEM_ENCHANTMENTS).isPresent()) {
+						List<ItemEnchantment> list = i.get(Keys.ITEM_ENCHANTMENTS).get();
+						if (list.get(0).getLevel() == 10 && list.get(0).getEnchantment().equals(Enchantments.EFFICIENCY)) {
+							LandProtectDB.addAdminClaim(new AdminClaim(worldUUID, newChunk));
+							ClaimBoundary boundary = new ClaimBoundary(player, newChunk);
+							boundary.spawnTimedResetDelay(TimeUnit.SECONDS, 60);
+							player.sendMessage(Text.of(TextColors.DARK_AQUA, "You have claimed this chunk"));
 						}
 					}
 				}

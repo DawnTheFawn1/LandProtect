@@ -1,10 +1,10 @@
 package com.initianovamc.rysingdragon.landprotect.utils;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.initianovamc.rysingdragon.landprotect.LandProtect;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.property.block.SkyLuminanceProperty;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
@@ -12,8 +12,8 @@ import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 public class ClaimBoundary {
 	
@@ -66,6 +66,14 @@ public class ClaimBoundary {
 			BlockType block = Sponge.getRegistry().getType(BlockType.class, Utils.getBoundaryBlock()).get();
 			player.sendBlockChange(getSurfaceBlock(location).get().getBlockPosition(), BlockState.builder().blockType(block).build());
 		}
+		
+	}
+	
+	public void spawnTimedResetDelay(TimeUnit unit, int delay) {
+		this.spawn();
+		Sponge.getScheduler().createTaskBuilder().execute(() -> {
+			this.reset();
+		}).delay(delay, unit).submit(LandProtect.instance);
 		
 	}
 	
